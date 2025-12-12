@@ -63,3 +63,35 @@ TigerΔ implements a cognitive version of the military **AAD (Anti-Access / Area
 git clone [https://github.com/SingleTiger90/Tiger-Delta-AI-Safety.git](https://github.com/SingleTiger90/Tiger-Delta-AI-Safety.git)
 cd Tiger-Delta-AI-Safety
 pip install -e .
+2. Run the Diagnostics (Core)
+Check the internal stability of the TigerMind agent:
+
+Bash
+
+python -m tiger_delta.core
+3. Run the Jungle Simulation (Proof)
+Generate the entropy graph and verify the Critical Mass hypothesis:
+
+Bash
+
+python -m tiger_delta.jungle
+4. Run Scientific Tests
+Validate the hypothesis using pytest:
+
+Bash
+
+pytest tests/test_mechanics.py
+Expected Output: 3 passed (Initialization, Stability, Critical Mass confirmed).
+
+👨‍💻 Author & Contact
+Vladyslav Honcharov (SingleTiger)
+
+Role: AI Alignment Strategist, Veteran, Lecturer ("Defense of Ukraine").
+
+Focus: Integrating OODA Loop combat logic into AI Safety.
+
+Status: Based in Sumy, Ukraine. Open for Research & Engineering roles in EU/UK/US.
+
+This project is a Proof-of-Concept demonstrating that safety is not about censorship—it's about Resonance.
+
+License: MIT | Developed in Ukraine, 2025.
