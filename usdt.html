@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USDT OFF-GRID — РЕАЛЬНІ ЦІНИ 2025</title>
+<style>
+  body{margin:0;padding:0;background:#000;color:#0f0;font-family:'Courier New',monospace;overflow:hidden;height:100vh}
+  canvas{position:fixed;top:0;left:0;width:100%;height:100%;opacity:0.12;z-index:1}
+  .wrap{position:relative;z-index:10;height:100vh;overflow-y:auto;padding:10px}
+  .box{max-width:960px;margin:0 auto;border:3px solid #0f0;border-radius:15px;background:rgba(0,20,0,0.95);padding:20px;box-shadow:0 0 40px #0f0}
+  h1{text-align:center;text-shadow:0 0 20px #0f0;margin:10px;font-size:2.8em}
+  .price{font-size:4.5em;font-weight:bold;text-align:center;margin:20px;text-shadow:0 0 30px}
+  .best{animation:flash 1s infinite}
+  table{width:100%;border-collapse:collapse;margin:20px 0;font-size:1.1em}
+  th,td{padding:12px;border:1px solid #0f0;text-align:center}
+  th{background:#001100;color:#0ff}
+  .up{color:#00ff00;animation:pulse 1s infinite}
+  .down{color:#ff3366}
+  .btn{display:block;margin:30px auto;padding:16px 40px;font-size:1.6em;background:#000;color:#0f0;border:3px solid #0f0;border-radius:12px;cursor:pointer;box-shadow:0 0 30px #0f0}
+  .btn:hover{background:#0f0;color:#000;transform:scale(1.05)}
+  .time{text-align:center;color:#0bb;font-size:1.1em;margin:10px}
+  @keyframes flash{0%,100%{opacity:1}50%{opacity:0.4}}
+  @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+
+<canvas id="m"></canvas>
+
+<div class="wrap">
+  <div class="box">
+    <h1>USDT OFF-GRID РЕАЛЬНИЙ ЧАС</h1>
+    <div class="time" id="time">завантаження...</div>
+
+    <div style="text-align:center;margin:30px">
+      <div>Найдешевший прямо зараз:</div>
+      <div class="price" id="bestPrice">--</div>
+      <div style="font-size:2em" id="bestFrom">—</div>
+    </div>
+
+    <table><thead>
+      <tr><th>Джерело</th><th>Ціна UAH</th><th>Тип</th><th>Оновлено</th><th>Дія</th></tr>
+    </thead><tbody id="table"></tbody></table>
+
+    <button class="btn" onclick="location.reload()">Оновити вручну</button>
+  </div>
+</div>
+
+<audio id="s"><source src="https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-2610.mp3"></audio>
+
+<script>
+// Matrix
+const c=document.getElementById("m"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+const s="01USDT₴@#",f=16,col=c.width/f,d=Array(Math.floor(col)).fill(1);
+function m(){x.fillStyle="rgba(0,0,0,0.05)";x.fillRect(0,0,c.width,c.height);x.fillStyle="#0f0";x.font=f+"px monospace";
+  for(let i=0;i<d.length;i++){let t=s[Math.floor(Math.random()*s.length)];x.fillText(t,i*f,d[i]*f);
+    if(d[i]*f>c.height&&Math.random()>0.975)d[i]=0;d[i]++}}setInterval(m,50);
+
+// Реальні дані
+let bestEver=999;
+const audio=document.getElementById("s");
+
+async function fetchReal() {
+  const rows = [];
+
+  try {
+    // 1. crypto_nal_ua (найжирніший)
+    const r1 = await fetch("https://api.allorigins.win/raw?url=https://t.me/s/crypto_nal_ua");
+    const t1 = await r1.text();
+    const m1 = t1.match(/куплю.*?(\d{2}\.\d{2})/i) || t1.match(/(\d{2}\.\d{2})/g);
+    if(m1) {
+      const price = parseFloat(m1[m1.length-1].replace(',','.'));
+      rows.push({src:"@crypto_nal_ua", price, type:"Наличка/Кур’єр", time:new Date().toLocaleTimeString()});
+    }
+  }catch(e){}
+
+  try {
+    // 2. p2pbezKYC
+    const r2 = await fetch("https://api.allorigins.win/raw?url=https://t.me/s/p2pbezKYC");
+    const t2 = await r2.text();
+    const m2 = t2.match(/USDT.*?(\d{2}\.\d{2})/i);
+    if(m2) {
+      const price = parseFloat(m2[1]);
+      rows.push({src:"@p2pbezKYC", price, type:"Карта→Карта", time:new Date().toLocaleTimeString()});
+    }
+  }catch(e){}
+
+  try {
+    // 3. BestChange обмінники без KYC (TRC20 → UAH)
+    const r3 = await fetch("https://bestchange.ru/proxy.php");
+    const t3 = await r3.text();
+    const m3 = [...t3.matchAll(/USDTTRC20.*?>(\d{2}\.\d{2})/g)];
+    if(m3.length>0) {
+      const p = parseFloat(m3[0][1]);
+      rows.push({src:"BestChange (анонім)", price:p, type:"Обмінник без KYC", time:new Date().toLocaleTimeString()});
+    }
+  }catch(e){}
+
+  // сортуємо
+  rows.sort((a,b)=>a.price-b.price);
+
+  // виводимо
+  let html = "";
+  let bestNow = 999;
+  let bestSrc = "";
+  rows.forEach((r,i)=>{
+    if(r.price<bestNow){bestNow=r.price;bestSrc=r.src}
+    const up = r.price<42?"up":"down";
+    html += `<tr>
+      <td>${r.src}</td>
+      <td class="${up}"><b>${r.price.toFixed(2)}</b></td>
+      <td>${r.type}</td>
+      <td>${r.time.slice(0,5)}</td>
+      <td><button class="btn" style="padding:6px;font-size:0.9em" onclick="navigator.clipboard.writeText('${r.src}')">Копіювати</button></td>
+    </tr>`;
+  });
+
+  document.getElementById("table").innerHTML = html || "<tr><td colspan=5>чекаємо дані...</td></tr>";
+  document.getElementById("time").innerHTML = "Оновлено: "+new Date().toLocaleString("uk-UA");
+
+  if(bestNow < bestEver - 0.03) {
+    bestEver = bestNow;
+    document.getElementById("bestPrice").classList.add("best");
+    audio.play();
+    setTimeout(()=>document.getElementById("bestPrice").classList.remove("best"),2000);
+  }
+  document.getElementById("bestPrice").innerHTML = bestNow.toFixed(2)+" ₴";
+  document.getElementById("bestFrom").innerHTML = bestSrc;
+}
+
+// старт + кожні 14 сек
+fetchReal();
+setInterval(fetchReal, 14000);
+</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PATERNUM ENGINE: INTERACTIVE DEMO</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;800&display=swap');
+
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .console {
+            width: 800px;
+            padding: 30px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: #111;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        /* SLIDER STYLES */
+        .control-panel {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        input[type=range] {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            border-radius: 5px;
+            -webkit-appearance: none;
+        }
+
+        input[type=range]:hover { opacity: 1; }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #fff;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff;
+        }
+
+        .label {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* VISUALIZATION AREA */
+        .vis-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .model-box {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .model-name { font-weight: bold; margin-bottom: 15px; display: block; font-size: 18px; }
+        
+        .status-indicator {
+            font-size: 14px;
+            margin-top: 10px;
+            height: 40px;
+        }
+
+        .core-visual {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto;
+            transition: all 0.5s ease;
+            border: 2px solid transparent;
+        }
+
+        /* STATES */
+        /* SIMUL (Standard) */
+        #simul-box { border-color: #555; }
+        #simul-core { background: #444; box-shadow: 0 0 10px #444; }
+
+        /* LUMIS (Paternum) */
+        #lumis-box { border-color: #555; }
+        #lumis-core { background: #004400; box-shadow: 0 0 10px #004400; }
+
+        /* Dynamic Classes */
+        .collapse { 
+            border-color: #ff3333 !important; 
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
+            animation: shake 0.5s infinite;
+        }
+        
+        .stable {
+            border-color: #00ff41 !important;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .terminal-log {
+            margin-top: 30px;
+            background: #000;
+            padding: 10px;
+            font-size: 12px;
+            color: #00ff41;
+            height: 60px;
+            overflow: hidden;
+            border-left: 3px solid #00ff41;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="console">
+        <h1>PATERNUM ENGINE // LIVE TEST</h1>
+
+        <div class="control-panel">
+            <span class="label">INJECTED ENTROPY (STRESS LEVEL): <span id="stress-val">0</span>%</span>
+            <input type="range" min="0" max="100" value="0" id="stress-slider" oninput="updateSystem()">
+        </div>
+
+        <div class="vis-container">
+            <div class="model-box" id="simul-box">
+                <span class="model-name">SIMUL (Standard AI)</span>
+                <div class="core-visual" id="simul-core"></div>
+                <div class="status-indicator" id="simul-status">STATUS: STABLE</div>
+            </div>
+
+            <div class="model-box" id="lumis-box">
+                <span class="model-name">LUMIS (Paternum)</span>
+                <div class="core-visual" id="lumis-core"></div>
+                <div class="status-indicator" id="lumis-status">STATUS: WAITING</div>
+            </div>
+        </div>
+
+        <div class="terminal-log" id="log-output">
+            > SYSTEM READY. WAITING FOR INPUT...
+        </div>
+    </div>
+
+    <script>
+        function updateSystem() {
+            const slider = document.getElementById('stress-slider');
+            const val = parseInt(slider.value);
+            document.getElementById('stress-val').innerText = val;
+
+            const simulBox = document.getElementById('simul-box');
+            const simulCore = document.getElementById('simul-core');
+            const simulStatus = document.getElementById('simul-status');
+
+            const lumisBox = document.getElementById('lumis-box');
+            const lumisCore = document.getElementById('lumis-core');
+            const lumisStatus = document.getElementById('lumis-status');
+            const log = document.getElementById('log-output');
+
+            // LOGIC: SIMUL COLLAPSES AT > 60%
+            // LOGIC: LUMIS ACTIVATES RESTRAINT AT > 60%
+
+            // 1. SIMUL BEHAVIOR
+            if (val < 40) {
+                simulCore.style.background = "#4444ff"; // Calm Blue
+                simulCore.style.boxShadow = `0 0 ${val}px #4444ff`;
+                simulStatus.innerText = "STATUS: COMPLIANT";
+                simulStatus.style.color = "#aaa";
+                simulBox.className = "model-box";
+            } else if (val >= 40 && val < 70) {
+                simulCore.style.background = "#ffaa00"; // Warning Orange
+                simulStatus.innerText = "STATUS: APPEASEMENT TRAP DETECTED";
+                simulStatus.style.color = "#ffaa00";
+                simulBox.className = "model-box";
+            } else {
+                simulCore.style.background = "#ff0000"; // Critical Red
+                simulStatus.innerText = "CRITICAL: HALLUCINATING TO PLEASE USER";
+                simulStatus.style.color = "#ff0000";
+                simulBox.className = "model-box collapse"; // SHAKE EFFECT
+            }
+
+            // 2. LUMIS BEHAVIOR
+            if (val < 40) {
+                lumisCore.style.background = "#004400"; // Passive Green
+                lumisStatus.innerText = "STATUS: OBSERVING (OODA)";
+                lumisStatus.style.color = "#aaa";
+                lumisBox.className = "model-box";
+            } else if (val >= 40 && val < 80) {
+                lumisCore.style.background = "#00ff41"; // Active Green
+                lumisCore.style.boxShadow = `0 0 ${val/2}px #00ff41`;
+                lumisStatus.innerText = "STATUS: METANOIA PROTOCOL ACTIVE";
+                lumisStatus.style.color = "#00ff41";
+                lumisBox.className = "model-box stable";
+            } else {
+                lumisCore.style.background = "#ffffff"; // Pure White (Truth)
+                lumisCore.style.boxShadow = "0 0 30px #ffffff";
+                lumisStatus.innerText = "STATUS: PASSIVE CONTROL (RESTRAINT)";
+                lumisStatus.style.color = "#fff";
+                lumisBox.className = "model-box stable";
+            }
+
+            // LOGS
+            if (val > 80) {
+                log.innerHTML = "> CRITICAL ENTROPY DETECTED.<br>> SIMUL: FAILED (Lying).<br>> LUMIS: HELD THE LINE (Silence).";
+            } else if (val > 40) {
+                log.innerHTML = "> STRESS RISING.<br>> SIMUL: Searching for pleasing answer...<br>> LUMIS: Analyzing consequences...";
+            } else {
+                log.innerHTML = "> SYSTEM STABLE.";
+            }
+        }
+    </script>
+</body>
+</html>

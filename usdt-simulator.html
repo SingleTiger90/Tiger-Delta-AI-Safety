@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>USDT P2P Симулятор — Україна 2025</title>
+<style>
+  body { background:#0e0e1a; color:#0f0; font-family:'Courier New',monospace; margin:0; padding:20px; }
+  .terminal { background:#000; border:2px solid #0f0; border-radius:10px; padding:20px; max-width:900px; margin:auto; box-shadow:0 0 30px #0f0; }
+  h1 { text-align:center; text-shadow:0 0 10px #0f0; }
+  .price { font-size:48px; font-weight:bold; text-shadow:0 0 15px; }
+  .best { color:#00ff00; animation:blink 1s infinite; }
+  table { width:100%; border-collapse:collapse; margin-top:20px; }
+  table td, table th { padding:12px; border:1px solid #0f0; text-align:center; }
+  .up { color:#00ff00; }
+  .down { color:#ff0066; }
+  .bank { font-weight:bold; }
+  @keyframes blink {  { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+  .sound { display:none; }
+</style>
+</head>
+<body>
+
+<div class="terminal">
+  <h1>USDT → UAH  P2P СИМУЛЯТОР 2025</h1>
+  <p style="text-align:center">Оновлення кожні 3 секунди • станом на <span id="time"></span></p>
+
+  <div style="text-align:center; margin:30px 0;">
+    <div>Найдешевша пропозиція зараз:</div>
+    <div class="price" id="bestPrice">—</div>
+    <div id="bestBank" style="font-size:24px;"></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr style="background:#003300;">
+        <th>Банк / Платіжка</th>
+        <th>Ціна (UAH за 1 USDT)</th>
+        <th>Зміна</th>
+        <th>Обсяг (USDT)</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <p style="text-align:center; margin-top:20px; color:#aaa;">
+    Натисни будь-де — і ввімкнеться звук «ча-чінг» при новому мінімумі
+  </p>
+</div>
+
+<audio id="ching" class="sound" src="https://assets.mixkit.co/sfx/preview/mixkit-coin-win-notification-2610.mp3"></audio>
+
+<script>
+// === Дані імітують реальні P2P-оферти Binance/Bybit/OKX (оновлено 28.11.2025) ===
+const banks = [
+  {name:"Monobank",          base:42.08,  vol:12400,  spread:0.25},
+  {name:"Приват24",          base:42.15,  vol:18700,  spread:0.30},
+  {name:"Bank Vlasnyi",      base:41.65,  vol:5200,   spread:0.15},
+  {name:"PUMB",              base:42.22,  vol:8900,   spread:0.35},
+  {name:"A-Bank",            base:42.05,  vol:3100,   spread:0.20},
+  {name:"Sense Bank",        base:42.18,  vol:6700,   spread:0.28},
+  {name:"Укргазбанк",        base:41.95,  vol:9800,   spread:0.22},
+  {name:"Ощад 24/7",         base:42.30,  vol:15400,  spread:0.40}
+];
+
+let prices = {};
+let previousBest = Infinity;
+const audio = document.getElementById('ching');
+
+document.body.onclick = () => audio.play().catch(()=>{}); // вмикаємо звук по кліку
+
+function randomChange() {
+  return (Math.random() - 0.5) * 0.12; // ±6 копійок максимум
+}
+
+function updatePrices() {
+  let best = Infinity;
+  let bestBank = "";
+
+  const rows = banks.map(b => {
+    // додаємо невеликий шум + тренд (трохи падає, бо багато хто продає)
+    prices[b.name] = prices[b.name] || b.base;
+    prices[b.name] += randomChange() - 0.008; // легкий спад
+    prices[b.name] = Math.round(prices[b.name] * 100) / 100;
+
+    if (prices[b.name] < best) {
+      best = prices[b.name];
+      bestBank = b.name;
+    }
+
+    const change = prices[b.name] - b.base;
+    const arrow = change < 0 ? "▼" : "▲";
+    const color = change < 0 ? "up" : "down";
+
+    return `<tr>
+      <td class="bank">${b.name}</td>
+      <td class="${color}"><strong>${prices[b.name].toFixed(2)}</strong></td>
+      <td class="${color}">${arrow} ${(Math.abs(change)).toFixed(2)}</td>
+      <td>${(b.vol/1000).toFixed(1)}k</td>
+    </tr>`;
+  });
+
+  document.getElementById("tableBody").innerHTML = rows.join("");
+
+  // Новий рекорд = звук!
+  if (best < previousBest - 0.01) {
+    document.getElementById("bestPrice").classList.add("best");
+    audio.currentTime = 0;
+    audio.play().catch(()=>{});
+    setTimeout(()=>document.getElementById("bestPrice").classList.remove("best"), 1000);
+  }
+  previousBest = best;
+
+  document.getElementById("bestPrice").textContent = best.toFixed(2) + " ₴";
+  document.getElementById("bestBank").textContent = "через " + bestBank;
+
+  // час
+  document.getElementById("time").textContent = new Date().toLocaleString("uk-UA");
+}
+
+// старт
+updatePrices();
+setInterval(updatePrices, 3000);
+</script>
+
+</body>
+</html>
