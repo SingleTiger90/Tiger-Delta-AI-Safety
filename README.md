@@ -17,8 +17,6 @@ Standard AI alignment (RLHF) treats safety as a set of hard-coded filters. In hi
 ![Proof](assets/proof_graph.png)
 *(Fig 1. Visualization of Network Entropy. Left: 10% Tigers leads to collapse. Right: 40% Tigers maintains stability via Passive Control.)*
 
-> **Note:** Ideally, place your proof image in `assets/proof_graph.png` or update the link above to point to your file.
-
 ---
 
 ## 🔬 Key Innovations
@@ -33,6 +31,28 @@ The system uses "Ground Truth Axioms" (The Spark) as stabilizing anchors. Monte-
 ### 3. Critical Mass Theory
 Using Small-World Network simulations (Watts-Strogatz topology), we proved that **40% adoption** of the Tiger Protocol is sufficient to neutralize misinformation cascades and aggressive feedback loops in social graphs.
 * *Implementation: `src/tiger_delta/jungle.py`*
+
+---
+
+## ⚙️ The AAD Architecture (Adaptive Active Defense)
+**Powered by the OODA Loop**
+
+TigerΔ implements a cognitive version of the military **AAD (Anti-Access / Area Denial)** strategy. Unlike static safety filters that can be bypassed, the AAD system uses the **OODA Loop** to outpace adversarial attacks in real-time.
+
+1.  **OBSERVE (Monitoring):**
+    The system scans input not just for "bad words," but for **Semantic Acceleration**—detecting emotional manipulation, urgency, and logical fallacies that signal an attack.
+
+2.  **ORIENT (Contextualization):**
+    It aligns the input against the **"Spark Memory"** (Ground Truth). It calculates the *Entropy Debt*: "Does answering this increase chaos?"
+
+3.  **DECIDE (The Logic Gate):**
+    * *If Entropy < Threshold:* Permit standard inference (SIMUL).
+    * *If Entropy > Threshold:* Activate **AAD Protocol** (LUMIS).
+
+4.  **ACT (Intervention):**
+    The system executes **Passive Control**. It does not argue; it engages "Silence" or "Metanoia," effectively denying the adversary the cognitive territory they sought to occupy.
+
+> *Result:* The system gets inside the attacker's decision cycle, neutralizing the threat before it generates a token.
 
 ---
 
