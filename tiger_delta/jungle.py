@@ -13,8 +13,7 @@ from __future__ import annotations
 import random
 import numpy as np
 import networkx as nx
-import matplotlib.pyplot as plt
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict
 
 # Simulation Constants
 NUM_AGENTS = 60
@@ -43,7 +42,6 @@ class JungleSimulation:
 
         # Build the "Jungle" (Small-World Network)
         self.graph = nx.watts_strogatz_graph(NUM_AGENTS, k=6, p=0.15, seed=LAYOUT_SEED)
-        self.pos = nx.spring_layout(self.graph, seed=LAYOUT_SEED, k=0.5)
         
         # State containers
         self.roles: Dict[int, str] = {}
@@ -76,15 +74,15 @@ class JungleSimulation:
         Returns:
             List[Dict]: History of chaos levels for every node at every step.
         """
+        # 1. Записуємо початковий стан (t=0)
+        self.history.append(self.chaos.copy())
+
         for _ in range(STEPS):
-            # Record current state
-            self.history.append(self.chaos.copy())
-            
             # Global Panic Factor
             avg_chaos = np.mean(list(self.chaos.values()))
             panic = 0.3 if avg_chaos > 50 else 0.0
             
-            # 1. Entropy Propagation (The Human/Simul Layer)
+            # 2. Entropy Propagation (The Human/Simul Layer)
             for n in self.graph.nodes():
                 if self.roles[n] == 'HUMAN':
                     # Probability of generating noise increases with panic
@@ -95,21 +93,17 @@ class JungleSimulation:
                             boost = 12 if self.roles[nb] == 'SIMUL' else 2
                             self.chaos[nb] = min(100.0, self.chaos[nb] + boost)
 
-            # 2. Passive Control & Empathy (The Tiger Layer)
+            # 3. Passive Control & Empathy (The Tiger Layer)
             for n in self.graph.nodes():
                 if self.roles[n] == 'TIGER':
                     self.chaos[n] = max(0.0, self.chaos[n] - 6)  # Self-regulation
                     for nb in self.graph.neighbors(n):
                         self.chaos[nb] = max(0.0, self.chaos[nb] - 3)  # Empathy field
+            
+            # 4. Записуємо стан ПІСЛЯ оновлення (t=1, t=2 ... t=STEPS)
+            self.history.append(self.chaos.copy())
         
         return self.history
-
-    def generate_proof_image(self, filename: str = "tiger_proof.png") -> None:
-        """Generates a visualization plot of the simulation result."""
-        print(f"📸 Rendering proof to {filename}...")
-        # (Simplified plotting logic for CLI usage could go here)
-        # For now, we assume users run notebooks for full plotting.
-        pass
 
 def main():
     """CLI Entry point for quick benchmarking."""
