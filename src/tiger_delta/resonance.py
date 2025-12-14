@@ -1,59 +1,96 @@
 import json
-import time
 import os
+import time
+from typing import Dict, List
 
 class TigerResonance:
     """
-    Модуль резонансної пам'яті.
-    Зберігає не текст, а фізичні вектори ентропії та стабільності.
+    КІСТКОВИЙ МОЗОК (Persistent Memory).
+    Відповідає за:
+    1. Збереження досвіду (JSON).
+    2. Пам'ять про біль (Шрами).
+    3. Аналітику трендів (Історія Ентропії).
     """
-    def __init__(self, filepath="tiger_state.json"):
-        self.filepath = filepath
-        self.state = self._load_state()
+    def __init__(self, filename="paternum_marrow.json"):
+        # Файл пам'яті буде створюватися в корені проекту (рівнем вище src)
+        # Це щоб файл json не губився всередині папки з кодом
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.filename = os.path.join(base_dir, filename)
+        
+        # Налаштування: скільки останніх імпульсів пам'ятати для графіків
+        self.HISTORY_LIMIT = 100 
+        self.memory = self._load_memory()
 
-    def _load_state(self):
-        if os.path.exists(self.filepath):
+    def _load_memory(self) -> Dict:
+        """Завантажує пам'ять з диска або створює нову."""
+        if os.path.exists(self.filename):
             try:
-                with open(self.filepath, 'r', encoding='utf-8') as f:
+                with open(self.filename, 'r', encoding='utf-8') as f:
                     return json.load(f)
-            except json.JSONDecodeError:
-                return self._new_born()
-        return self._new_born()
+            except Exception as e:
+                print(f"[RESONANCE] Error loading memory: {e}. Creating new.")
+                return self._genesis_state()
+        return self._genesis_state()
 
-    def _new_born(self):
+    def _genesis_state(self):
+        """Стан 'Народження' (якщо файлу ще немає)."""
         return {
-            "cycles": 0, 
-            "entropy_vectors": [], 
-            "stable_patterns": []
+            "created_at": time.time(),
+            "scars": [],           # Список небезпечних хешів
+            "total_impulses": 0,   # Лічильник досвіду
+            "entropy_history": []  # Історія для трендів
         }
 
-    def process_impulse(self, input_hash, entropy):
-        # Поріг стабільності для шкали 0-1,000,000
-        # Якщо ентропія < 1000, це вважається "тишею" (сигналом)
-        is_stable = entropy < 1000.0 
+    def _save_memory(self):
+        """Фізичний запис на диск."""
+        try:
+            with open(self.filename, 'w', encoding='utf-8') as f:
+                json.dump(self.memory, f, indent=4, ensure_ascii=False)
+        except Exception as e:
+            print(f"[RESONANCE] CRITICAL: Cannot write to memory! {e}")
+
+    def is_scarred(self, input_hash: str) -> bool:
+        """
+        РЕФЛЕКС: Перевіряє, чи є цей хеш у списку шрамів.
+        """
+        if "scars" not in self.memory: return False
         
-        self.state["entropy_vectors"].append({
-            "t": time.time(),
-            "impulse": input_hash,
-            "entropy": entropy,
-            "is_stable": is_stable
-        })
-        self._crystallize()
-        return {"entropy": entropy, "stable": is_stable}
+        for scar in self.memory["scars"]:
+            if scar["id"] == input_hash:
+                return True
+        return False
 
-    def _crystallize(self):
-        """Ущільнення даних: відкидаємо шум, зберігаємо патерни."""
-        if len(self.state["entropy_vectors"]) > 50:
-            stable = [v for v in self.state["entropy_vectors"] if v["is_stable"]]
-            if stable:
-                self.state["stable_patterns"].append({
-                    "cycle": self.state["cycles"], 
-                    "count": len(stable)
-                })
-            self.state["entropy_vectors"] = []
-            self.state["cycles"] += 1
-            self._save()
+    def process_impulse(self, input_hash: str, entropy: float, is_danger: bool = False):
+        """
+        Обробляє результат взаємодії.
+        Зберігає ентропію в історію і формує шрами при загрозі.
+        """
+        # Ініціалізація полів для сумісності (якщо файл старий)
+        if "entropy_history" not in self.memory: self.memory["entropy_history"] = []
+        if "scars" not in self.memory: self.memory["scars"] = []
+        if "total_impulses" not in self.memory: self.memory["total_impulses"] = 0
 
-    def _save(self):
-        with open(self.filepath, 'w', encoding='utf-8') as f:
-            json.dump(self.state, f, indent=2)
+        # 1. Оновлюємо лічильник
+        self.memory["total_impulses"] += 1
+        
+        # 2. Зберігаємо Ентропію для аналітики
+        timestamp = time.time()
+        self.memory["entropy_history"].append([timestamp, entropy])
+
+        # 3. Чистка історії (Rolling Window)
+        # Якщо записів більше ліміту -> видаляємо старі, залишаємо нові
+        if len(self.memory["entropy_history"]) > self.HISTORY_LIMIT:
+            self.memory["entropy_history"] = self.memory["entropy_history"][-self.HISTORY_LIMIT:]
+
+        # 4. Обробка Загрози (Шрам)
+        if is_danger:
+            if not self.is_scarred(input_hash):
+                new_scar = {
+                    "id": input_hash,
+                    "timestamp": timestamp,
+                    "reason": f"High Entropy: {entropy}"
+                }
+                self.memory["scars"].append(new_scar)
+                print(f"[RESONANCE] ⚠️ SCAR FORMED. New threat remembered.")
+        
+        self._save_memory()
