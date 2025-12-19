@@ -112,6 +112,3 @@ Location: Ukraine, 2025
 
 📜 License
 This project is licensed under the MIT License.
-
-# 2. Run (Requires root for low-level UDP access)
-sudo ./target/release/tiger_delta
