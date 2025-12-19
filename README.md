@@ -1,5 +1,3 @@
-markdown
-
 # TigerΔ: Bio-Mimetic Autonomous Defense Engine
 ### Asymmetric Cyber-Defense & Entropy Harvesting Protocol
 
