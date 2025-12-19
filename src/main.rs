@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use std::str;
 use std::time::Duration;
 
-// Connect the "Soul" module
+// Connect the "Soul" module (Your lumis.rs file)
 mod lumis;
 use lumis::LumisCore;
 
