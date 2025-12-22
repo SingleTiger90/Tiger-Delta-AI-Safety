@@ -1,0 +1,10 @@
+[package]
+name = "tiger_delta_core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+ring = "0.17"
+hex = "0.4"
+# rand прибираємо — ми працюємо на ірраціональних константах, а не на вдачі.
