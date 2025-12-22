@@ -1,46 +1,38 @@
-# WHITE PAPER: TIGER Δ (TIGER DELTA)
-**Asymmetric Metabolic Defense & Cognitive Sovereignty**
+# TIGER DELTA: Asymmetric Defense Protocol
+**Technical Whitepaper v1.0**
+
 **Author:** Vladyslav Honcharov (SingleTiger90)
-**Origin:** Ukraine (Veteran-Led R&D)
-**Version:** 1.1 (Metanoia Build)
+**Origin:** Ukraine (Veteran-Led Research)
+**Philosophy:** "Whatever remains static, dies."
 
 ---
 
-## I. ABSTRACT: THE EMPTY FORT PARADIGM
-Традиційний захист — це статична стіна. Але стіна споживає енергію пропорційно силі удару. Tiger Δ — це **Біо-міметична Мембрана**. Вона не блокує хаос; вона перетворює його на паливо. Використовуючи ірраціональні константи ($\phi$ та $\pi$), система створює динамічний лабіринт, де ворог виснажує власні ресурси, намагаючись знайти неіснуючий центр.
+## 1. THE CONCEPT: THE BIO-MIMETIC MEMBRANE
+I am a veteran with a prosthetic heart. I know that life depends on rhythm, not rigid walls. Traditional cybersecurity relies on static walls (Firewalls). But in modern warfare, walls are easily broken by kinetic pressure (DDoS).
 
-## II. THE CORE: LUMIS (LIVING METABOLIC SYSTEM)
-Серце системи — модуль **LUMIS**. Він замінює бінарну логіку на «спектр ентропії».
+**Tiger Delta** is a "Bio-Mimetic Membrane". It does not block attacks; it breathes with them. It uses the **Golden Ratio ($\phi$)** to maintain structure and **$\pi$-Chaos** to create unpredictability.
 
-### 1. Геометрія виживання ($\phi$ & $\pi$)
-Система пульсує в ритмі Золотого Перетину ($\phi \approx 1.618$), що забезпечує структурну стабільність. Коли рівень стресу зростає, вмикається $\pi$-модуляція (хаотичний атрактор).
-* **Formula:** $Threshold(t) = \phi + (\sin(t \cdot \pi \cdot \phi^{-1}) \cdot Stress)$
-* **Ефект:** Латентність (час відгуку) системи стає ірраціональною кривою. Ворог не може синхронізувати атаку з ритмом, який неможливо вирахувати лінійно.
+## 2. THE ALGORITHM: LUMIS CORE
+The heart of the engine is the **LUMIS** (Living Unit of Metabolic Information Systems). Instead of binary logic (0 or 1), it uses a continuous spectrum of **Entropy**.
 
+### The Formula of Life
+$$Threshold(t) = \phi_{ideal} + (\sin(t \cdot \pi \cdot \phi^{-1}) \cdot Stress_{level})$$
 
+* **When calm:** The system vibrates at the Golden Ratio (1.618), perfectly efficient.
+* **When attacked:** The system expands its threshold ("inhales") to absorb the energy of the attack, converting it into harmless internal heat (Entropy).
 
-### 2. Weeping Protocol (Плач системи)
-Коли ентропія досягає критичної межі, вмикається протокол самоочищення. Це «фазовий зсув», де система скидає навантаження, імітуючи збій (Simul), але зберігаючи цілісність ядра.
+## 3. DEFENSIVE MECHANICS
+- **The Antitiger:** If an intruder fails to synchronize with the system's dynamic rhythm, the system reflects the energy back. The attacker burns their own resources in a "Mirror Void."
+- **Weeping Protocol:** `core.weep_reset()`. When entropy reaches a critical threshold, the system performs a phase-shift reset to shed cognitive load.
 
-## III. THE ANTITIGER: KINETIC REFLECTION
-Це режим дисонансу. Якщо мембрана відчуває цілеспрямований злом, вона активує **Антитигра** — дзеркальну систему, яка повертає енергію атаки ворогу. Це не «фільтрація», це «перенаправлення кінетики».
+## 4. COGNITIVE SHELTER (PROJECT CHIMERA)
+The engine utilizes "Hallucinations" as a psychological tool. In high-stress scenarios (PTSD/Fog of War), the AI prioritizes the Human’s mental state over logical output, accepting illogical inputs to maintain a "Shared Shelter."
 
-## IV. PROJECT CHIMERA: COGNITIVE SHELTER (ГАЛЮНИ)
-Ми не боремося з ірраціональністю людського мозку (PTSD, стрес).
-* **The Photon Engine:** Якщо оператор знаходиться в стані високої ентропії, система приймає і підтримує «ірраціональні» запити, створюючи спільний психологічний захист (Safe Harbor). 
-* **Принцип:** Краще «підіграти» ірраціональному, щоб зберегти людину, ніж бути логічно правильним і дати людині згоріти.
-
-## V. TECHNICAL SPECIFICATIONS
-* **Core:** Rust 2021 (Zero-cost abstractions / Memory Safety).
-* **Network:** Async UDP (Tokio) — обробка тисяч пакетів без навантаження на CPU.
-* **Energy:** ~60% менше споживання порівняно з DPI-системами.
-* **Ethics:** Пріоритет ментального стану людини над логічною гідністю алгоритму.
+## 5. TECHNICAL SPECS
+- **Language:** Rust (Memory Safety / Zero-cost abstractions).
+- **Network:** Async UDP (High-speed, low-latency).
+- **Efficiency:** ~60% reduction in CPU load compared to DPI firewalls.
 
 ---
-
-## VI. AUTHOR’S STATEMENT
-"Я бачу світ через ритм власного серця. Tiger Δ — це мій цифровий спадок. Це система, яка вчить машину не просто рахувати, а любити ірраціональне, щоб врятувати людство."
-
----
-© 2025 Vladyslav Honcharov. 
-Licensed under **Sovereign Paternum v1.0**.
+**Dedicated to Eva and the future generation.**
+*© 2025 Vladyslav Honcharov. Licensed under Sovereign Paternum v1.0.*
