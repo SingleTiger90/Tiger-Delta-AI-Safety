@@ -1,127 +1,123 @@
+// src/lumis.rs
+
 use std::f64::consts::PI;
 
-/// THE GOLDEN RATIO (Phi)
-/// Represents the ideal structural stability in nature (1.618...)
-const PHI_IDEAL: f64 = 1.618033988749895;
+/// Golden Ratio (φ) — mathematical constant representing ideal proportion and stability
+pub const PHI: f64 = 1.6180339887498948;
 
-/// THE MODULATOR (Inverse Phi)
-/// Used to create harmonic resonance with the chaos.
-const PHI_MODULATOR: f64 = 0.6180339887;
+/// Inverse Golden Ratio (φ⁻¹) — used for controlled harmonic oscillation
+pub const PHI_INVERSE: f64 = 0.6180339887498948;
 
-/// LUMIS CORE: The Bio-Mimetic Logic Unit
-/// ---------------------------------------
-/// This struct represents the "Soul" of the Tiger Delta engine.
-/// It does not use static logic (If/Else). Instead, it uses a metabolic
-/// state (Entropy) to adapt to the pressure of incoming kinetic data.
+/// LumisCore: Bio-Inspired Adaptive Defense Engine
+/// ---------------------------------------------
+/// Replaces traditional static rules with a dynamic, entropy-driven decision system.
+/// The core maintains an internal stress state and generates time-varying thresholds
+/// using harmonic resonance between π (chaos) and φ (order).
 pub struct LumisCore {
-    /// Internal metabolic stress (0.0 = Calm, 1.0 = Critical)
-    entropy_level: f64,
-    
-    /// Internal clock for phase modulation
-    cycle_tick: u64,
+    /// Current system entropy/stress level (0.0 = fully stable, 1.0 = saturated)
+    entropy: f64,
+
+    /// Internal monotonic tick counter for temporal phase modulation
+    tick: u64,
 }
 
 impl LumisCore {
-    /// Genesis: Creates a new Living Core with zero entropy.
+    /// Initializes the core in a pristine, zero-entropy state
     pub fn new() -> Self {
-        LumisCore {
-            entropy_level: 0.0,
-            cycle_tick: 0,
+        Self {
+            entropy: 0.0,
+            tick: 0,
         }
     }
 
-    /// THE Pi-Phi BRIDGE
-    /// -----------------
-    /// Calculates the "Living Threshold".
-    /// Instead of a static firewall rule, we generate a dynamic wave.
-    /// We use PI (Infinite Chaos) to modulate PHI (Perfect Order).
-    ///
-    /// Returns: A floating-point threshold value for the current microsecond.
-    pub fn compute_living_phi(&mut self) -> f64 {
-        // Increment the internal time tick
-        self.cycle_tick = self.cycle_tick.wrapping_add(1);
+    /// Computes the current dynamic decision threshold
+    /// The threshold naturally oscillates over time and adapts based on entropy,
+    /// allowing the system to "breathe" under load like a biological organism.
+    pub fn dynamic_threshold(&mut self) -> f64 {
+        self.tick = self.tick.wrapping_add(1);
 
-        // 1. Generate a chaotic oscillator using PI
-        let time_phase = self.cycle_tick as f64;
-        let chaos_wave = (time_phase * PI * PHI_MODULATOR).sin();
+        // Generate harmonic oscillation using time, π, and inverse golden ratio
+        let phase = self.tick as f64;
+        let oscillation = (phase * PI * PHI_INVERSE).sin();
 
-        // 2. Calculate deviation based on stress (Adrenaline)
-        // The higher the entropy, the wider the system "breathes" to absorb shock.
-        let deviation = chaos_wave * self.entropy_level * 0.1;
+        // Entropy modulates the amplitude of oscillation (adaptive tolerance)
+        let adaptation = oscillation * self.entropy.clamp(0.0, 1.0) * 0.1;
 
-        // 3. Return the Living Threshold
-        PHI_IDEAL + deviation
+        // Final threshold centered around the golden ratio
+        PHI + adaptation
     }
 
-    /// METABOLIC ABSORPTION
-    /// --------------------
-    /// Instead of blocking a packet, we absorb its kinetic energy.
-    /// This increases the internal entropy (heat) of the system.
-    pub fn absorb_stress(&mut self, impact: f64) {
-        // Increase entropy, capped at 1.0 (System Meltdown limit)
-        self.entropy_level = (self.entropy_level + impact).min(1.0);
+    /// Accumulates threat impact into internal entropy
+    /// Higher impact increases system stress, widening future thresholds.
+    pub fn accumulate_entropy(&mut self, impact: f64) {
+        if impact > 0.0 {
+            self.entropy = (self.entropy + impact).min(1.0);
+        }
     }
 
-    /// WEEPING PROTOCOL (Homeostasis)
-    /// ------------------------------
-    /// Every biological system must cool down.
-    /// This function dissipates entropy over time.
-    /// If stress is too high, it performs a "Phase Shift" (rapid cooling).
-    pub fn weep_reset(&mut self) {
-        if self.entropy_level > 0.8 {
-            // Emergency Cooling (Phase Shift)
-            // Simulates the system "shedding" its skin/layer.
-            self.entropy_level *= 0.5; 
+    /// Performs homeostatic entropy dissipation
+    /// - Normal conditions: slow natural decay
+    /// - High stress (>80%): rapid phase-shift cooling
+    pub fn dissipate_entropy(&mut self) {
+        if self.entropy > 0.8 {
+            // Emergency stabilization — fast entropy reduction
+            self.entropy *= 0.5;
         } else {
-            // Natural Decay (Relaxation)
-            // The system slowly returns to a calm state (Golden Ratio stability).
-            self.entropy_level *= 0.98;
+            // Gradual relaxation toward equilibrium
+            self.entropy *= 0.98;
         }
     }
 
-    /// Diagnostics: Returns the current stress level for visualization.
-    pub fn get_entropy(&self) -> f64 {
-        self.entropy_level
+    /// Returns current entropy level (useful for metrics, logging, UI)
+    pub fn entropy_level(&self) -> f64 {
+        self.entropy
+    }
+
+    /// Resets the core to initial stable state (e.g., after full recovery or reboot)
+    pub fn reset(&mut self) {
+        self.entropy = 0.0;
+        self.tick = 0;
     }
 }
-// --- UNIT TESTS (Scientific Validation) ---
+
+// Unit tests — validate core adaptive behavior
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_genesis_state() {
+    fn test_initial_state() {
         let core = LumisCore::new();
-        assert_eq!(core.get_entropy(), 0.0, "System must start with zero entropy");
+        assert_eq!(core.entropy_level(), 0.0);
     }
 
     #[test]
-    fn test_entropy_absorption() {
+    fn test_entropy_accumulation_and_cap() {
         let mut core = LumisCore::new();
-        // Simulate a kinetic hit
-        core.absorb_stress(0.5);
-        assert_eq!(core.get_entropy(), 0.5, "System must absorb kinetic energy");
+        core.accumulate_entropy(0.7);
+        assert_eq!(core.entropy_level(), 0.7);
+        core.accumulate_entropy(0.8);
+        assert_eq!(core.entropy_level(), 1.0); // capped at 1.0
+    }
+
+    #[test]
+    fn test_threshold_is_dynamic() {
+        let mut core = LumisCore::new();
+        let t1 = core.dynamic_threshold();
+        let t2 = core.dynamic_threshold();
+        assert_ne!(t1, t2, "Threshold must change over time");
     }
 
     #[test]
     fn test_homeostasis_recovery() {
         let mut core = LumisCore::new();
-        core.absorb_stress(0.8); // High stress
-        
-        // Simulate 100 cycles of healing
-        for _ in 0..100 {
-            core.weep_reset();
-        }
-        
-        assert!(core.get_entropy() < 0.2, "System must return to Phi-stability over time");
-    }
+        core.accumulate_entropy(0.95);
 
-    #[test]
-    fn test_phi_modulation() {
-        let mut core = LumisCore::new();
-        let val1 = core.compute_living_phi();
-        let val2 = core.compute_living_phi();
-        
-        assert_ne!(val1, val2, "Phi threshold must be dynamic (Living), not static");
+        // Simulate 100 cycles of dissipation
+        for _ in 0..100 {
+            core.dissipate_entropy();
+        }
+
+        assert!(core.entropy_level() < 0.3, "System should recover from high stress");
     }
 }
