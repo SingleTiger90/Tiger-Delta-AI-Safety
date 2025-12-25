@@ -1,10 +1,44 @@
+# Cargo.toml
+
 [package]
 name = "tiger_delta_core"
-version = "0.1.0"
+version = "0.3.0"
 edition = "2021"
+authors = ["Vladyslav Honcharov (SingleTiger90) <giovanigentile90@gmail.com>"]
+description = "Bio-mimetic adaptive defense engine based on OODA loop, golden ratio harmonics, and entropy-driven decision making."
+repository = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
+license = "MIT"
+keywords = ["cybersecurity", "bio-mimetic", "ai-safety", "ooda-loop", "edge-security"]
+categories = ["network-programming", "cryptography", "embedded"]
+readme = "README.md"
+
+# Exclude unnecessary files from crate
+exclude = [
+    ".github/",
+    "assets/",
+    "docs/",
+    ".gitignore"
+]
 
 [dependencies]
-tokio = { version = "1", features = ["full"] }
-ring = "0.17"
-hex = "0.4"
-# rand прибираємо — ми працюємо на ірраціональних константах, а не на вдачі.
+tokio = { version = "1.38", features = ["full"] }     # Асинхронна мережа (UDP/TCP)
+getrandom = { version = "0.2", features = ["std"] }   # Hardware RNG для nonce (заміна rand!)
+ring = "0.17"                                         # Крипто-примітиви (якщо потрібні в майбутньому)
+hex = "0.4"                                            # Для логування/дебагу (опціонально)
+
+# Опціонально — для метрик і логування в продакшн
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+
+# Для майбутньої eBPF/XDP інтеграції (user-space bindings)
+# aya = { version = "0.12", optional = true }
+
+[features]
+default = ["std"]
+std = []
+
+# Якщо плануєш окремий бінарний executable
+[[bin]]
+name = "tiger_delta"
+path = "src/main.rs"
+required-features = []
