@@ -1,14 +1,18 @@
 # 🐅 Delta Tiger v1.0 "Ulenspiegel"
 
 ```text
-████████╗██╗ ██████╗ ███████╗██████╗     ██████╗ ███████╗██╗  ████████╗ █████╗ 
-╚══██╔══╝██║██╔════╝ ██╔════╝██╔══██╗    ██╔══██╗██╔════╝██║  ╚══██╔══╝██╔══██╗
-   ██║   ██║██║  ███╗█████╗  ██████╔╝    ██║  ██║█████╗  ██║     ██║   ███████║
-   ██║   ██║██║   ██║██╔══╝  ██╔══██╗    ██║  ██║██╔══╝  ██║     ██║   ██╔══██║
-   ██║   ██║╚██████╔╝███████╗██║  ██║    ██████╔╝███████╗███████╗██║   ██║  ██║
-   ╚═╝   ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═════╝ ╚══════╝╚══════╝╚═╝   ╚═╝  ╚═╝
-                                                                               
-                   [ BIO-MIMETIC AUTONOMOUS DEFENSE SYSTEM ]                   
+    _   _   _   _   _   _   _  
+   / \ / \ / \ / \ / \ / \ / \ 
+  ( T | I | G | E | R | Δ | ! )
+   \_/ \_/ \_/ \_/ \_/ \_/ \_/ 
+
+        . _..::__:.._ .
+      .' :        : '.
+     /   :  Δ TGR  :   \
+    |    :        :    |
+     \   :..____..:   /
+      '._          _.'
+         '--....--'
 ```
 
 ```
@@ -21,9 +25,9 @@
 > — Heinrich Heine
 
 **Delta Tiger** is not a firewall.  
-It is a **living digital immune system** — a bio-mimetic autonomous defense engine.
+It is a **living digital immune system** — a bio-inspired autonomous defense engine.
 
-It implements the **Empty Fort Strategy**: the attacker expends all energy breaching walls built from their own force — only to find nothing inside.
+It implements the **Empty Fortress** strategy: the attacker expends all energy breaching walls built from their own force — only to find nothing inside.
 
 ## Core Philosophy
 - Attack is not blocked — it is **transformed into system fuel**.
@@ -48,18 +52,23 @@ When attack pressure > 0.5:
 ## Quick Start (Bare-Metal Recommended)
 
 ```bash
-cargo build --release
-sudo ./target/release/tiger_delta
+cargo run --release
 ```
 
 - Listens on UDP 8888
 - Paranoia filter: 8–512 bytes only
-- Wake word: "WAKE_UP_NEO"
+- System ready to transform energy
+
+## Repository Structure
+- `lumis.rs` — adaptive core with breathing and deep rest mode
+- `string_state.rs` — string compactification with feedback chaos
+- `lagrange.rs` — nonlinear gravitational trap with hysteresis
+- `main.rs` — paranoid UDP listener with energy redirection
 
 ## License
 Dual-licensed:
-- MIT License (see LICENSE)
-- Tiger-Delta System Public License (TΔ-S) v1.0 — ethical restrictions (see TIGER-DELTA-LICENSE.md)
+- MIT License (see `LICENSE`)
+- Tiger-Delta System Public License (TΔ-S) v1.0 — ethical restrictions (see `TIGER-DELTA-LICENSE.md`)
 
 ## Citation
 
@@ -73,7 +82,8 @@ Dual-licensed:
 }
 ```
 
-The ashes no longer knock.  
+The ashes of Klaas no longer knock.  
 They breathe within the rhythm of this system.
 
-— SingleTiger90 | Ukrainian Veteran | Defense Tech Researcher
+— SingleTiger90
+```
