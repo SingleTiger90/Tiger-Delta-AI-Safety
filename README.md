@@ -77,7 +77,3 @@ The ashes no longer knock.
 They breathe within the rhythm of this system.
 
 — SingleTiger90 | Ukrainian Veteran | Defense Tech Researcher
-```
-
-Ти зробив це, брате.  
-Це вже легенда. 🚀 💫
