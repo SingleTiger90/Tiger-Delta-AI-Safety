@@ -1,103 +1,94 @@
 // src/main.rs
 
-use std::io::{self, BufRead};
-
 mod lumis;
-mod simul;
 mod string_state;
+mod lagrange;
 
-use lumis::LumisCore;
-use simul::SimulUnit;
-use string_state::StringState;
+use crate::string_state::{StringState, to_float};
+use crate::lagrange::LagrangeEquilibrium;
+use crate::lumis::{LumisCore, PHI_INVERSE};
 
-fn main() {
-    // Initialize core components
-    let mut lumis = LumisCore::new();
-    let mut simul = SimulUnit::new();
-    let mut state = StringState::new();
+use tokio::sync::mpsc;
+use tokio::net::UdpSocket;
+use tracing::{info, warn};
 
-    println!("Lumis Defense System Initialized");
-    println!("-------------------------------");
+use std::sync::Arc;
 
-    // Example normalized attributes (simulating packet data: IP, port, etc. as fixed-point)
-    let attrs: [i64; 10] = [
-        ((0.1 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.23 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.45 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.67 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.89 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.12 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.34 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.56 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.78 * string_state::FIXED_SCALE as f64) as i64),
-        ((0.90 * string_state::FIXED_SCALE as f64) as i64),
-    ];
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tracing_subscriber::fmt::init();
+    info!("Delta Tiger v1.0 \"Ulenspiegel\" — System Online");
 
-    // Simulate incoming threat (e.g., from network packet)
-    let threat_impact = 0.75; // Normalized threat force (e.g., from anomaly detection)
+    let (tx, mut rx) = mpsc::channel::<(Vec<i64>, std::net::SocketAddr)>(1024);
 
-    // Step 1: Simulate projection in SimulUnit
-    if simul.project_impact(threat_impact) {
-        println!("SIMUL ALERT: Potential overload detected. Accumulating entropy in LumisCore.");
+    let socket = Arc::new(UdpSocket::bind("0.0.0.0:8888").await?);
+    let socket_responder = socket.clone();
 
-        // Step 2: Accumulate entropy in LumisCore
-        lumis.accumulate_entropy(threat_impact);
+    tokio::spawn(async move {
+        let mut lumis = LumisCore::new();
+        let mut defense_mass = 1000.0;
+        let mut lagrange = LagrangeEquilibrium::new(defense_mass);
+        let mut state = StringState::new();
 
-        // Step 3: Compute dynamic threshold
-        let threshold = lumis.dynamic_threshold();
-        println!("Dynamic Threshold: {:.4}", threshold);
-
-        // Step 4: Compactify data in StringState (fixed-point folding)
-        let compact = state.compactify(&attrs);
-        let compact_float = compact as f64 / string_state::FIXED_SCALE as f64;
-        println!("Compact Scalar: {:.10}", compact_float);
-
-        // Decision logic example: If compact > threshold, trigger defense
-        if compact_float > threshold {
-            println!("DEFENSE TRIGGERED: Generating deception response.");
-            // Here: Generate noise, tarpit, or redirect
-        } else {
-            println!("Traffic accepted under current threshold.");
-        }
-
-        // Step 5: Dissipate entropy for homeostasis
-        lumis.dissipate_entropy();
-        println!("Post-dissipation Entropy: {:.4}", lumis.entropy_level());
-    } else {
-        println!("No alert from simulation. System stable.");
-    }
-
-    // Optional: Interactive mode for testing (simulate multiple impacts)
-    println!("\nEnter 'impact <value>' to simulate threats, or 'exit' to quit.");
-    let stdin = io::stdin();
-    for line in stdin.lines() {
-        match line {
-            Ok(input) => {
-                let parts: Vec<&str> = input.trim().split_whitespace().collect();
-                if parts.is_empty() {
-                    continue;
+        while let Some((attrs_vec, addr)) = rx.recv().await {
+            let attrs: [i64; 10] = {
+                let mut arr = [0i64; 10];
+                for (i, &val) in attrs_vec.iter().take(10).enumerate() {
+                    arr[i] = val;
                 }
-                match parts[0] {
-                    "impact" => {
-                        if parts.len() > 1 {
-                            if let Ok(impact) = parts[1].parse::<f64>() {
-                                simul.project_impact(impact);
-                                lumis.accumulate_entropy(impact);
-                                let threshold = lumis.dynamic_threshold();
-                                let compact = state.compactify(&attrs);
-                                let compact_float = compact as f64 / string_state::FIXED_SCALE as f64;
-                                println!("Impact: {}, Threshold: {:.4}, Compact: {:.10}", impact, threshold, compact_float);
-                                lumis.dissipate_entropy();
-                            } else {
-                                println!("Invalid impact value.");
-                            }
-                        }
-                    }
-                    "exit" => break,
-                    _ => println!("Unknown command."),
+                arr
+            };
+
+            let attack_energy: f64 = attrs.iter().map(|&x| x as f64).sum::<f64>() * PHI_INVERSE / 1_000_000.0;
+
+            let compact = state.compactify(&attrs);
+            let compact_float = to_float(compact);
+
+            let result = lagrange.stabilize(compact_float, attack_energy);
+
+            let resonance = (1.0 - (result.unwrap_or(PHI) - PHI).abs() / PHI).clamp(0.0, 1.0);
+            info!("Resonance level: {:.4}", resonance);
+
+            lumis.tick_cycle(attack_energy, resonance, &mut defense_mass);
+            lagrange = LagrangeEquilibrium::new(defense_mass);
+
+            match result {
+                None => {
+                    warn!("Annihilation from {} (resonance {:.4})", addr, resonance);
+                    let _ = socket_responder.send_to(b"DELTA_SHIELD_NULL", addr).await;
                 }
+                Some(_) => {}
             }
-            Err(_) => break,
+
+            if lumis.is_resting() {
+                info!("LUMIS REST MODE — deep recovery activated");
+            }
         }
+    });
+
+    info!("Paranoia Filter Active — Listening on UDP 8888");
+    let mut buf = [0u8; 2048];
+
+    loop {
+        let (len, addr) = socket.recv_from(&mut buf).await?;
+
+        if len < 8 || len > 512 {
+            continue;
+        }
+
+        let packet_data = &buf[..len];
+        let weight: i64 = packet_data.iter().map(|&b| b as i64).sum();
+
+        let attrs: Vec<i64> = vec![
+            addr.ip().to_string().len() as i64,
+            addr.port() as i64,
+            len as i64,
+            packet_data[0] as i64,
+            weight,
+            (len as i64 % 7),
+            0, 0, 0, 0,
+        ];
+
+        if let Err(_) = tx.try_send((attrs, addr)) {}
     }
 }
