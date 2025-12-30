@@ -1,39 +1,40 @@
-# 🐅 Tiger Delta v1.0 "Ulenspiegel"
+# Delta Tiger v1.0 "Ulenspiegel"
 
-**Tiger Delta** — це автономна імунна система для Bare-Metal серверів, побудована на принципах нелінійної термодинаміки та біонічних рефлексів. Система реалізує концепцію "Апарату Батька", де енергія атаки стає паливом для внутрішньої стабілізації.
+> *"The ashes of Klaas beat upon my heart."*  
+> — Heinrich Heine
 
----
+**Delta Tiger** is not a firewall.  
+It is a bio-inspired, autonomous immune system for digital organisms.
 
-## 🧬 Архітектура Організму
+Built on nonlinear dynamics, golden ratio harmonics (φ), and the principle of transforming attack energy into system resilience, Delta Tiger implements an "Empty Fortress" strategy: the attacker expends force to breach walls built from their own energy — only to find nothing inside.
 
-Система складається з трьох ключових вузлів, що працюють у синергії:
+### Core Principles
+- **Energy Redirection**: Attack pressure purges internal entropy.
+- **Nonlinear Gravity Trap**: Lagrange equilibrium with hysteresis and curved space mathematics.
+- **Paranoia Filter**: Payload-agnostic processing — only physical characteristics are used.
+- **Father's Apparatus**: Purging costs system mass — nothing is free.
+- **Deep Rest Mode**: Active recovery during silence.
 
-### 1. Simul (The Senses)
-Ядро, що базується на `StringState`. Воно не читає вміст пакетів (Payload), а відчуває їхню "вагу" та "текстуру" через ірраціональні згортки ($\pi$ та $\phi$). Це унеможливлює ін'єкцію коду.
+### Architecture
+- `lumis.rs` — Adaptive core with breathing, metabolism, and rest cycles.
+- `string_state.rs` — Fixed-point compactification with feedback-induced chaos.
+- `lagrange.rs` — Nonlinear equilibrium trap with memory.
+- `main.rs` — UDP listener with paranoia filter and real-time response.
 
-### 2. Lumis (The Metabolism)
-Цифрова вегетативна система. Реалізує два режими:
-* **Active Mode (Видих):** Використовує тиск атаки для очищення системних кешів та скидання ентропії.
-* **Rest Mode (Спокій):** Режим глибокої регенерації та охолодження при відсутності загрози.
+### Deployment
+Single bare-metal server recommended for maximal isolation.
 
-### 3. Lagrange (The Skeleton)
-Гравітаційна пастка, що працює в нелінійному полі. Вона анігілює пакети, які порушують математичну гармонію системи, перетворюючи їх на корисний резонанс.
-
----
-
-## 🛡️ Параноїдальний Фільтр (Security First)
-
-Tiger Delta працює за принципом **"Zero-Trust Physics"**:
-* **Air-Gap для Payload:** Ми аналізуємо лише фізичні атрибути (розмір, вага байтів, порт). Вміст пакету ніколи не потрапляє в логіку прийняття рішень.
-* **Non-linear Resilience:** Поріг захисту постійно змінює свою "кривизну", що робить безглуздим підбір патернів атакуючим.
-* **Mass Conservation:** Очищення системи коштує "маси захисту" (`defense_mass`), що робить її динамічно збалансованою.
-
----
-
-## 🚀 Швидкий старт
-
-Система розроблена на Rust для максимальної швидкодії на фізичному залізі.
-
-### Запуск:
 ```bash
 cargo run --release
+Listens on UDP 8888. Send anything — watch it become fuel.LicenseDual-licensed:MIT License (see LICENSE)
+Tiger-Delta System Public License (TΔ-S) v1.0 — ethical restrictions (see TIGER-DELTA-LICENSE.md)
+@software{DeltaTiger2025,
+  author = {Honcharov, Vladyslav},
+  title = {Delta Tiger v1.0: Bio-Inspired Autonomous Immune System},
+  year = {2025},
+  url = {https://github.com/SingleTiger90/Tiger-Delta-AI-Safety},
+  version = {1.0}
+}
+The ashes no longer just knock.
+They breathe within the rhythm of this system.— SingleTiger90
+
