@@ -1,3 +1,5 @@
+markdown
+
 # 🐅 Delta Tiger v1.0 "Ulenspiegel"
 
 ```text
@@ -13,38 +15,61 @@
      \   :..____..:   /
       '._          _.'
          '--....--'
+
 [ STATUS: PARANOIA FILTER ACTIVE ]
 [ MODE: ADAPTIVE METABOLISM ]
 [ CORE: FATHER'S APPARATUS ENGAGED ]
- "The Ashes of Klaas" ProjectThis system is not just software.
-It is a digital immune system.It does not block attacks.
-It transforms them into itself. Core Markers[Σ] SIMUL: String compactification.
-We do not read data — we sense its vibration.
-Mechanics: 10-dimensional attribute vector → fixed-point folding.
-[Λ] LAGRANGE: Gravitational trap. Nonlinear defense via Φ\Phi\Phi
-.
-Mechanics: Annihilation through sinusoidal harmonics and curved space.
-[Φ] LUMIS: System breathing. "Father's Apparatus".
-Mechanics: Using attack energy for internal purge.
 
- Exhale ProtocolWhen attack_energy > 0.5:Input: Shock wave (DDoS or flood).
-Action: Attack energy wipes internal entropy (caches, states).
-Cost: System loses defense_mass — payment for purification.
+"The ashes of Klaas beat upon my heart."
+— Heinrich Heine
+Delta Tiger is not a firewall.
+It is a living digital immune system.An autonomous organism that breathes attack energy, purges entropy with the force of the attacker, and maintains balance through the golden ratio (Φ).It implements the Empty Fortress principle: the attacker builds the walls with their own energy — only to find nothing inside.Core PhilosophyAttack is not blocked.
+It is transformed.
+The stronger the strike, the cleaner the system becomes.
+Nothing is free — purification costs mass (Father's Apparatus).
+The system has two modes of existence: active breathing and deep rest.
+Payload is never read — only its physical "weight" and "texture" are felt.
+
+Key ComponentsMarker
+Name
+Role
+Principle
+Σ
+SIMUL
+String compactification & vibration sensing
+Fixed-point folding + feedback chaos
+Λ
+LAGRANGE
+Nonlinear gravitational trap
+Curved space + sinusoidal harmonics
+Φ
+LUMIS
+Adaptive core & metabolism
+Exhale Protocol + Deep Rest Mode
+
+Exhale ProtocolWhen attack pressure > 0.5:The system uses the incoming force to purge internal entropy.
+Cost: reduction in defense_mass.
+Result: the stronger the attack, the cleaner the system.
 
 "100 births — 100 deaths. Balance preserved."
- Quick StartFor Bare-Metal and Linux warriors only.
+Quick Start (Bare-Metal Only)bash
+
 cargo run --release
-Port: UDP 8888
-Filter: 8–512 bytes (Air-Gapped Payload)
-System ready to receive "energy".
 
- Structurelumis.rs — adaptive core with breathing and deep rest mode
-string_state.rs — string compactification with feedback chaos
-lagrange.rs — nonlinear gravitational trap with hysteresis
-main.rs — paranoid UDP listener with energy redirection
+Listens on UDP 8888
+Packet filter: 8–512 bytes (air-gapped payload)
+Ready to transform energy
 
- LicenseDual-licensed:MIT License (see LICENSE)
+Repository Structurelumis.rs — breathing core with rest & metabolism
+string_state.rs — vibration sensing & compactification
+lagrange.rs — nonlinear annihilation trap
+main.rs — paranoia listener & energy redirection
+
+LicenseDual-licensed:MIT License (see LICENSE)
 Tiger-Delta System Public License (TΔ-S) v1.0 — ethical restrictions (see TIGER-DELTA-LICENSE.md)
+
+Citationbibtex
+
 @software{DeltaTiger2025,
   author = {Honcharov, Vladyslav},
   title = {Delta Tiger v1.0: Bio-Inspired Autonomous Immune System},
@@ -52,5 +77,7 @@ Tiger-Delta System Public License (TΔ-S) v1.0 — ethical restrictions (see TIG
   url = {https://github.com/SingleTiger90/Tiger-Delta-AI-Safety},
   version = {1.0}
 }
-The ashes of Klaas no longer knock.
+
+The ashes of Klaas no longer just knock.
 They breathe within the rhythm of this system.— SingleTiger90
+
