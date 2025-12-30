@@ -5,6 +5,7 @@ use std::f64::consts::PI;
 pub const PHI: f64 = 1.6180339887498948;
 pub const PHI_INVERSE: f64 = 0.6180339887498948;
 
+/// LumisCore — Bio-Inspired Adaptive Defense Core
 pub struct LumisCore {
     entropy: f64,
     tick: u64,
@@ -22,7 +23,7 @@ impl LumisCore {
         }
     }
 
-    /// Основний цикл життя: дихання, очищення, відновлення
+    /// Main life cycle: breathing, purging, recovery
     pub fn tick_cycle(&mut self, external_impact: f64, resonance: f64, mass: &mut f64) {
         self.tick = self.tick.wrapping_add(1);
 
@@ -50,25 +51,23 @@ impl LumisCore {
         let pressure = external_impact.abs();
 
         if pressure > 0.5 {
-            // Видих: сильна атака очищає систему
             let purge = pressure * 0.2;
             self.entropy -= purge;
 
-            // Ціна очищення: знос маси (Апарат Батька)
+            // Cost of purge: system mass decreases (Father's Apparatus)
             *mass -= purge * 0.05;
             if *mass < 100.0 {
-                *mass = 100.0; // мінімальне ядро виживання
+                *mass = 100.0;
             }
 
             if self.tick % 10 == 0 {
-                info!("EXHALE: Purge {:.3} entropy using pressure {:.2}. Mass cost: {:.3}",
+                info!("EXHALE: Purged {:.3} entropy using pressure {:.2}. Mass cost: {:.3}",
                       purge, pressure, purge * 0.05);
             }
         } else {
             self.accumulate_entropy(pressure * 0.1);
         }
 
-        // Внутрішній шум — система завжди дихає
         let internal_noise = (self.tick as f64 * 0.0001).sin() * 0.01;
         self.entropy += internal_noise;
 
