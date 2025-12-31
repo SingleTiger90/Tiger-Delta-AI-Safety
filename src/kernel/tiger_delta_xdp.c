@@ -20,11 +20,7 @@ static __always_inline __u64 rotl64(__u64 x, __u32 r) {
     return (x << r) | (x >> (64 - r));
 }
 
-/*
- * Optional global state:
- * bounded, convergent, no locks
- * (can be removed if you want pure stateless)
- */
+/* Global state map: bounded, convergent, no locks */
 struct {
     __uint(type, BPF_MAP_TYPE_ARRAY);
     __uint(max_entries, 1);
@@ -51,7 +47,6 @@ int tiger_delta_xdp(struct xdp_md *ctx) {
     void *data_end = (void *)(long)ctx->data_end;
     void *data     = (void *)(long)ctx->data;
 
-    /* Minimal bounds check */
     if (data + sizeof(struct ethhdr) > data_end)
         return XDP_PASS;
 
@@ -63,25 +58,24 @@ int tiger_delta_xdp(struct xdp_md *ctx) {
     if ((void *)(ip + 1) > data_end)
         return XDP_PASS;
 
-    /* Build synthetic 10D vector from packet metadata */
+    /* Build 10D vector from packet metadata */
     __u64 v[10];
-
     v[0] = ((__u64)ip->saddr << 32) | ip->daddr;
     v[1] = ((__u64)ip->protocol << 48) | ip->tot_len;
     v[2] = ((__u64)ip->id << 48) | ip->ttl;
     v[3] = ctx->rx_queue_index;
     v[4] = ctx->ingress_ifindex;
-    v[5] = ((__u64)ctx->data_end - (long)ctx->data);
+    v[5] = (__u64)(data_end - data);
     v[6] = (__u64)ctx->rx_queue_index * PHI_FIXED;
     v[7] = (__u64)ctx->ingress_ifindex ^ PI_FRAC;
     v[8] = (__u64)ip->check;
     v[9] = (__u64)ip->frag_off;
 
-    /* Fold */
+    /* Fold with temporal entropy */
     __u32 iter = (__u32)bpf_ktime_get_ns();
     __u64 folded = fold_vector(v, iter);
 
-    /* Temporal accumulation (bounded, convergent) */
+    /* Temporal accumulation in the map */
     __u32 key = 0;
     __u64 *state = bpf_map_lookup_elem(&resonance_state, &key);
     if (state) {
@@ -89,10 +83,5 @@ int tiger_delta_xdp(struct xdp_md *ctx) {
         bpf_map_update_elem(&resonance_state, &key, &new_state, BPF_ANY);
     }
 
-    /*
-     * Decision layer intentionally minimal:
-     * - no drop here
-     * - downstream logic may use state
-     */
     return XDP_PASS;
 }
