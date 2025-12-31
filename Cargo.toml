@@ -4,52 +4,63 @@ version = "1.0.0"
 edition = "2021"
 authors = ["Vladyslav Honcharov <giovanigentile90@gmail.com>"]
 description = "Delta Tiger: Bio-mimetic autonomous cyber defense engine using golden ratio harmonics and nonlinear resonance"
-repository = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
+homepage = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
+documentation = "https://docs.rs/delta_tiger"
 keywords = ["cybersecurity", "defense", "bio-mimetic", "rust", "network"]
 categories = ["network-programming", "security"]
-readme = "README.md"
 
-# Primary production binary
+# --- Binaries ---
+
+# Core engine
 [[bin]]
 name = "tiger_delta"
 path = "src/main.rs"
 
-# Exhale Protocol visual simulation
+# Exhale Protocol simulation
 [[bin]]
 name = "exhale_sim"
 path = "src/bin/exhale_sim.rs"
 
-# Comparative performance benchmark
+# Red Team Stress Testing tool
+[[bin]]
+name = "red_team"
+path = "src/bin/red_team_attack.rs"
+
+# --- Benchmarking ---
+
 [[bench]]
 name = "comparison"
 harness = false
 
 [dependencies]
-# Hardware RNG for nonce generation
+# Standard entropy source for nonces
 getrandom = { version = "0.2", features = ["std"] }
 
-# Industry-standard fast hashing for baseline comparison
+# High-speed hashing for O(1) baseline comparison
 xxhash-rust = { version = "0.8", features = ["xxh64"] }
 
-# High-performance logging and telemetry (JSON for ELK/Prometheus)
+# Production-grade logging (JSON for cloud environments)
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "json", "env-filter"] }
 
-# Asynchronous runtime for network listeners
+# High-concurrency async runtime
 tokio = { version = "1", features = ["full"] }
 
-# Numerical utilities for fixed-point math and constants
+# Mathematical traits for generic float operations
 num-traits = "0.2"
 
 [dev-dependencies]
-# Statistical benchmarking framework with HTML reports
+# Precision statistical benchmarking
 criterion = { version = "0.5", features = ["html_reports"] }
 
 [profile.release]
-# Aggressive optimizations for ultra-low latency (~12ns packet processing)
+# Maximum optimization for ~12ns per-packet processing
 opt-level = 3
-lto = true                  # Link Time Optimization
-codegen-units = 1           # Maximum optimization
-panic = "abort"             # Smaller binary, faster startup
-strip = true                # Remove debug symbols
+lto = true          # Full Link Time Optimization
+codegen-units = 1   # Maximum optimization potential (forces single-threaded codegen)
+panic = "abort"     # Strips overhead, ensures determinism and speed
+strip = true        # Removes all debug symbols for minimal binary size
+incremental = false # Ensures clean, top-tier optimization every build
