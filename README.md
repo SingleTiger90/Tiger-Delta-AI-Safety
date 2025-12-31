@@ -104,3 +104,18 @@ Throughput,8.13 Million packets/sec,Saturated 10Gbps+ theoretical line rate
 Latency,~123.00 ns,Per-packet processing overhead
 Memory State,8 Bytes,Constant O(1) footprint per stream
 Stability,100%,"Bounded state [0.0,1.0] under 10M attack vectors"
+## 🐯 TigerΔ: Aperiodic Resonance XDP Core
+
+TigerΔ (Tiger Delta) is a high-performance network defense engine that uses **irrational resonance** to detect and mitigate volumetric attacks at the L2/L3 level.
+
+### 🚀 Key Features
+* **eBPF/XDP Integration:** Operates directly in the NIC driver path (Zero-copy).
+* **Aperiodic Folding:** Uses fixed-point expansions of $\pi$ and $\Phi$ for 10D-to-1D vector collapse.
+* **Stateless O(1) Performance:** Zero cross-core communication, making it immune to state-exhaustion attacks.
+* **Deterministic Chaos:** Implements dynamic bit-rotation shifts to evade ML-based pattern matching.
+
+### 🛠 Installation & Launch
+1. Ensure you have `clang`, `llvm`, and `libbpf` installed.
+2. Compile and attach to your interface:
+   ```bash
+   make run INTERFACE=eth0
