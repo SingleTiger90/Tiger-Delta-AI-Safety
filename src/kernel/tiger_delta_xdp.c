@@ -12,88 +12,87 @@
 char LICENSE[] SEC("license") = "GPL";
 
 /* Fixed-point irrational constants */
-#define PHI_FIXED  0x6A09E667F3BCC909ULL
-#define PI_FRAC    0x243F6A8885A308D3ULL
+#define PHI_FIXED  0x6A09E667F3BCC909ULL
+#define PI_FRAC    0x243F6A8885A308D3ULL
 
 /* Rotate left helper (verifier-safe) */
 static __always_inline __u64 rotl64(__u64 x, __u32 r) {
-    return (x << r) | (x >> (64 - r));
+    return (x << r) | (x >> (64 - r));
 }
 
 /*
- * Optional global state:
- * bounded, convergent, no locks
- * (can be removed if you want pure stateless)
- */
+ * Optional global state:
+ * bounded, convergent, no locks
+ * (can be removed if you want pure stateless)
+ */
 struct {
-    __uint(type, BPF_MAP_TYPE_ARRAY);
-    __uint(max_entries, 1);
-    __type(key, __u32);
-    __type(value, __u64);
+    __uint(type, BPF_MAP_TYPE_ARRAY);
+    __uint(max_entries, 1);
+    __type(key, __u32);
+    __type(value, __u64);
 } resonance_state SEC(".maps");
 
 /* Core folding function: 10D → 1D */
 static __always_inline __u64 fold_vector(__u64 *v, __u32 iter) {
-    __u64 acc = 0;
+    __u64 acc = 0;
 
 #pragma unroll
-    for (int i = 0; i < 10; i++) {
-        __u32 r = 13 + ((iter + i) & 7);   // small phase drift
-        __u64 rotated = rotl64(v[i] ^ PI_FRAC, r);
-        acc = (acc + rotated) * PHI_FIXED;
-    }
-    return acc;
+    for (int i = 0; i < 10; i++) {
+        __u32 r = 13 + ((iter + i) & 7);   // small phase drift
+        __u64 rotated = rotl64(v[i] ^ PI_FRAC, r);
+        acc = (acc + rotated) * PHI_FIXED;
+    }
+    return acc;
 }
 
 /* XDP entry point */
 SEC("xdp")
 int tiger_delta_xdp(struct xdp_md *ctx) {
-    void *data_end = (void *)(long)ctx->data_end;
-    void *data     = (void *)(long)ctx->data;
+    void *data_end = (void *)(long)ctx->data_end;
+    void *data     = (void *)(long)ctx->data;
 
-    /* Minimal bounds check */
-    if (data + sizeof(struct ethhdr) > data_end)
-        return XDP_PASS;
+    /* Minimal bounds check */
+    if (data + sizeof(struct ethhdr) > data_end)
+        return XDP_PASS;
 
-    struct ethhdr *eth = data;
-    if (eth->h_proto != __constant_htons(ETH_P_IP))
-        return XDP_PASS;
+    struct ethhdr *eth = data;
+    if (eth->h_proto != __constant_htons(ETH_P_IP))
+        return XDP_PASS;
 
-    struct iphdr *ip = data + sizeof(struct ethhdr);
-    if ((void *)(ip + 1) > data_end)
-        return XDP_PASS;
+    struct iphdr *ip = data + sizeof(struct ethhdr);
+    if ((void *)(ip + 1) > data_end)
+        return XDP_PASS;
 
-    /* Build synthetic 10D vector from packet metadata */
-    __u64 v[10];
+    /* Build synthetic 10D vector from packet metadata */
+    __u64 v[10];
 
-    v[0] = ((__u64)ip->saddr << 32) | ip->daddr;
-    v[1] = ((__u64)ip->protocol << 48) | ip->tot_len;
-    v[2] = ((__u64)ip->id << 48) | ip->ttl;
-    v[3] = ctx->rx_queue_index;
-    v[4] = ctx->ingress_ifindex;
-    v[5] = ((__u64)ctx->data_end - (long)ctx->data);
-    v[6] = (__u64)ctx->rx_queue_index * PHI_FIXED;
-    v[7] = (__u64)ctx->ingress_ifindex ^ PI_FRAC;
-    v[8] = (__u64)ip->check;
-    v[9] = (__u64)ip->frag_off;
+    v[0] = ((__u64)ip->saddr << 32) | ip->daddr;
+    v[1] = ((__u64)ip->protocol << 48) | ip->tot_len;
+    v[2] = ((__u64)ip->id << 48) | ip->ttl;
+    v[3] = ctx->rx_queue_index;
+    v[4] = ctx->ingress_ifindex;
+    v[5] = ((__u64)ctx->data_end - (long)ctx->data);
+    v[6] = (__u64)ctx->rx_queue_index * PHI_FIXED;
+    v[7] = (__u64)ctx->ingress_ifindex ^ PI_FRAC;
+    v[8] = (__u64)ip->check;
+    v[9] = (__u64)ip->frag_off;
 
-    /* Fold */
-    __u32 iter = (__u32)bpf_ktime_get_ns();
-    __u64 folded = fold_vector(v, iter);
+    /* Fold */
+    __u32 iter = (__u32)bpf_ktime_get_ns();
+    __u64 folded = fold_vector(v, iter);
 
-    /* Temporal accumulation (bounded, convergent) */
-    __u32 key = 0;
-    __u64 *state = bpf_map_lookup_elem(&resonance_state, &key);
-    if (state) {
-        __u64 new_state = (*state + folded) >> 1;
-        bpf_map_update_elem(&resonance_state, &key, &new_state, BPF_ANY);
-    }
+    /* Temporal accumulation (bounded, convergent) */
+    __u32 key = 0;
+    __u64 *state = bpf_map_lookup_elem(&resonance_state, &key);
+    if (state) {
+        __u64 new_state = (*state + folded) >> 1;
+        bpf_map_update_elem(&resonance_state, &key, &new_state, BPF_ANY);
+    }
 
-    /*
-     * Decision layer intentionally minimal:
-     * - no drop here
-     * - downstream logic may use state
-     */
-    return XDP_PASS;
+    /*
+     * Decision layer intentionally minimal:
+     * - no drop here
+     * - downstream logic may use state
+     */
+    return XDP_PASS;
 }
-  куди це ?
