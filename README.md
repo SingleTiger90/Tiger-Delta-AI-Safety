@@ -96,3 +96,12 @@ Unlike linear defense systems where $O(n)$ complexity leads to exhaustion, Delta
 
 **Mathematical Baseline:**
 The energy redirection follows $E_r = \int \frac{\delta S}{\delta t} dt$, where $S$ is the entropy of the incoming flow.
+### 📈 Projected Stability Curve ($S$ vs $P$)
+$S$ = System Stability, $P$ = Network Pressure
+
+Traditional (Linear):   Tiger Delta (Adaptive):
+S |                     S |
+  |  \                     |  _______ (Exhale Peak)
+  |   \                    | /
+  |____\____ P             |/_________ P
+(System Crash)           (Self-Stabilizing)
