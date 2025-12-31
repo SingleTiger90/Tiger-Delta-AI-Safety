@@ -119,3 +119,14 @@ TigerΔ (Tiger Delta) is a high-performance network defense engine that uses **i
 2. Compile and attach to your interface:
    ```bash
    make run INTERFACE=eth0
+## Design Philosophy
+
+TigerΔ is not a replacement for traditional IDS/IPS (Suricata, Zeek).  
+It is a **complementary first-line shield**.
+
+- **Thermodynamic Defense**: Make attacks economically unviable by transforming their energy into system resilience.
+- **Stateless Simplicity**: Sacrifice deep inspection for ultra-low latency and minimal memory (8 bytes per stream).
+- **Sentinel at the Gate**: Filter 99% of high-volume noise so deeper systems can focus on the remaining 1%.
+- **Privacy by Design**: Payload-agnostic — never reads content, only physical characteristics.
+
+TigerΔ + Suricata = In-Depth Defense at line rate.
