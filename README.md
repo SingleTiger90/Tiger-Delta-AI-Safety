@@ -87,3 +87,12 @@ They breathe within the rhythm of this system.
 
 — SingleTiger90
 ```
+### 📈 Non-linear Stability Metrics (The "Tiger" Curve)
+Unlike linear defense systems where $O(n)$ complexity leads to exhaustion, Delta Tiger utilizes a state-space fold:
+
+1. **Phase 1 (Idle):** Latency < 10μs.
+2. **Phase 2 (Pressure):** Entropy increases, triggering the $\Phi$-Harmonic counter-resonance.
+3. **Phase 3 (Exhale):** The system uses incoming packet energy to reset the internal `StringState`. 
+
+**Mathematical Baseline:**
+The energy redirection follows $E_r = \int \frac{\delta S}{\delta t} dt$, where $S$ is the entropy of the incoming flow.
