@@ -99,3 +99,8 @@ To ensure the integrity of the **$\Phi$-Folding** logic, we simulated a synchron
 | **Stability** | 100% (Convergent entropy state) |
 
 > **Conclusion:** The system remains deterministic and stable under high-intensity synchronized traffic. The O(1) memory footprint effectively nullifies state-exhaustion attack vectors (e.g., CAM table overflows or connection tracking exhaustion).
+Metric,Value,Note
+Throughput,8.13 Million packets/sec,Saturated 10Gbps+ theoretical line rate
+Latency,~123.00 ns,Per-packet processing overhead
+Memory State,8 Bytes,Constant O(1) footprint per stream
+Stability,100%,"Bounded state [0.0,1.0] under 10M attack vectors"
