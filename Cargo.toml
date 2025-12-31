@@ -1,44 +1,55 @@
-# Cargo.toml
-
 [package]
-name = "tiger_delta_core"
-version = "0.3.0"
+name = "delta_tiger"
+version = "1.0.0"
 edition = "2021"
-authors = ["Vladyslav Honcharov (SingleTiger90) <giovanigentile90@gmail.com>"]
-description = "Bio-mimetic adaptive defense engine based on OODA loop, golden ratio harmonics, and entropy-driven decision making."
+authors = ["Vladyslav Honcharov <giovanigentile90@gmail.com>"]
+description = "Delta Tiger: Bio-mimetic autonomous cyber defense engine using golden ratio harmonics and nonlinear resonance"
 repository = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
 license = "MIT"
-keywords = ["cybersecurity", "bio-mimetic", "ai-safety", "ooda-loop", "edge-security"]
-categories = ["network-programming", "cryptography", "embedded"]
+keywords = ["cybersecurity", "defense", "bio-mimetic", "rust", "network"]
+categories = ["network-programming", "security"]
 readme = "README.md"
 
-# Exclude unnecessary files from crate
-exclude = [
-    ".github/",
-    "assets/",
-    "docs/",
-    ".gitignore"
-]
-
-[dependencies]
-tokio = { version = "1.38", features = ["full"] }     # Асинхронна мережа (UDP/TCP)
-getrandom = { version = "0.2", features = ["std"] }   # Hardware RNG для nonce (заміна rand!)
-ring = "0.17"                                         # Крипто-примітиви (якщо потрібні в майбутньому)
-hex = "0.4"                                            # Для логування/дебагу (опціонально)
-
-# Опціонально — для метрик і логування в продакшн
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
-
-# Для майбутньої eBPF/XDP інтеграції (user-space bindings)
-# aya = { version = "0.12", optional = true }
-
-[features]
-default = ["std"]
-std = []
-
-# Якщо плануєш окремий бінарний executable
+# Primary production binary
 [[bin]]
 name = "tiger_delta"
 path = "src/main.rs"
-required-features = []
+
+# Exhale Protocol visual simulation
+[[bin]]
+name = "exhale_sim"
+path = "src/bin/exhale_sim.rs"
+
+# Comparative performance benchmark
+[[bench]]
+name = "comparison"
+harness = false
+
+[dependencies]
+# Hardware RNG for nonce generation
+getrandom = { version = "0.2", features = ["std"] }
+
+# Industry-standard fast hashing for baseline comparison
+xxhash-rust = { version = "0.8", features = ["xxh64"] }
+
+# High-performance logging and telemetry (JSON for ELK/Prometheus)
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "json", "env-filter"] }
+
+# Asynchronous runtime for network listeners
+tokio = { version = "1", features = ["full"] }
+
+# Numerical utilities for fixed-point math and constants
+num-traits = "0.2"
+
+[dev-dependencies]
+# Statistical benchmarking framework with HTML reports
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[profile.release]
+# Aggressive optimizations for ultra-low latency (~12ns packet processing)
+opt-level = 3
+lto = true                  # Link Time Optimization
+codegen-units = 1           # Maximum optimization
+panic = "abort"             # Smaller binary, faster startup
+strip = true                # Remove debug symbols
