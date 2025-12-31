@@ -1,3 +1,11 @@
+    ████████╗██╗ ██████╗ ███████╗██████╗     ██████╗ ███████╗██╗  ████████╗ █████╗ 
+    ╚══██╔══╝██║██╔════╝ ██╔════╝██╔══██╗    ██╔══██╗██╔════╝██║  ╚══██╔══╝██╔══██╗
+       ██║   ██║██║  ███╗█████╗  ██████╔╝    ██║  ██║█████╗  ██║     ██║   ███████║
+       ██║   ██║██║   ██║██╔══╝  ██╔══██╗    ██║  ██║██╔══╝  ██║     ██║   ██╔══██║
+       ██║   ██║╚██████╔╝███████╗██║  ██║    ██████╔╝███████╗███████╗██║   ██║  ██║
+       ╚═╝   ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚═════╝ ╚══════╝╚══════╝╚═╝   ╚═╝  ╚═╝
+                                                                               
+                   [ BIO-MIMETIC AUTONOMOUS DEFENSE SYSTEM ]                   
 python -m src.tiger_delta.visualize_breath
 This plot shows the Resonance Pulse (Cyan) vs the Exhale Threshold (Red). Areas where the pulse exceeds the threshold represent neutralized attack energy.
 
