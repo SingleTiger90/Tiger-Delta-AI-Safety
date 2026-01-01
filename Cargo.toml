@@ -5,21 +5,51 @@ edition = "2021"
 authors = ["Vladyslav Honcharov <giovanigentile90@gmail.com>"]
 description = "Aperiodic Resonance Core for Autonomous Cyber Defense"
 
+# --------------------------------------------------
+# Dependencies
+# --------------------------------------------------
 [dependencies]
 anyhow = "1.0"
 log = "0.4"
 env_logger = "0.10"
 
-# === Red Team stress tests ===
+# CPU detection (for multicore stress test)
 num_cpus = "1.17"
 
-# === Runtime randomness (later use) ===
+# Randomness (used by other red team tools)
 rand = "0.8"
+
+# eBPF / XDP (existing tooling)
+aya = { git = "https://github.com/aya-rs/aya" }
+aya-log = { git = "https://github.com/aya-rs/aya" }
+
+# --------------------------------------------------
+# Binary targets
+# --------------------------------------------------
+
+[[bin]]
+name = "delta_tiger"
+path = "src/bin/delta_tiger.rs"
+
+[[bin]]
+name = "red_team"
+path = "src/bin/red_team.rs"
+
+[[bin]]
+name = "red_team_attack2"
+path = "src/bin/red_team_attack2.rs"
+
+[[bin]]
+name = "tiger_loader"
+path = "src/bin/tiger_loader.rs"
 
 [[bin]]
 name = "red_team_multicore"
 path = "src/bin/red_team_multicore.rs"
 
+# --------------------------------------------------
+# Release profile (low-latency / benchmark-oriented)
+# --------------------------------------------------
 [profile.release]
 opt-level = 3
 lto = true
