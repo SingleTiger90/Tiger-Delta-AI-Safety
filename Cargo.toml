@@ -1,25 +1,22 @@
+# Cargo.toml — Final Updated Version for Delta Tiger v1.0 "Ulenspiegel"
+
 [package]
 name = "delta_tiger"
 version = "1.0.0"
 edition = "2021"
 authors = ["Vladyslav Honcharov <giovanigentile90@gmail.com>"]
 description = "Delta Tiger: Bio-mimetic autonomous cyber defense engine using golden ratio harmonics and nonlinear resonance"
-license = "MIT"
-readme = "README.md"
 repository = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
-homepage = "https://github.com/SingleTiger90/Tiger-Delta-AI-Safety"
-documentation = "https://docs.rs/delta_tiger"
+license = "MIT"
 keywords = ["cybersecurity", "defense", "bio-mimetic", "rust", "network"]
 categories = ["network-programming", "security"]
 
-# --- Binaries ---
-
-# Core engine
+# Primary production binary
 [[bin]]
 name = "tiger_delta"
 path = "src/main.rs"
 
-# Exhale Protocol simulation
+# Exhale Protocol visual simulation
 [[bin]]
 name = "exhale_sim"
 path = "src/bin/exhale_sim.rs"
@@ -29,38 +26,35 @@ path = "src/bin/exhale_sim.rs"
 name = "red_team"
 path = "src/bin/red_team_attack.rs"
 
-# --- Benchmarking ---
-
+# Comparative performance benchmark
 [[bench]]
 name = "comparison"
 harness = false
 
 [dependencies]
-# Standard entropy source for nonces
+# Hardware RNG for nonce generation
 getrandom = { version = "0.2", features = ["std"] }
 
-# High-speed hashing for O(1) baseline comparison
+# Industry-standard fast hashing for baseline comparison
 xxhash-rust = { version = "0.8", features = ["xxh64"] }
 
-# Production-grade logging (JSON for cloud environments)
+# High-performance logging and telemetry (JSON for ELK/Prometheus)
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "json", "env-filter"] }
 
-# High-concurrency async runtime
+# Asynchronous runtime for network listeners
 tokio = { version = "1", features = ["full"] }
 
-# Mathematical traits for generic float operations
+# Numerical utilities for fixed-point math and constants
 num-traits = "0.2"
 
 [dev-dependencies]
-# Precision statistical benchmarking
+# Statistical benchmarking framework
 criterion = { version = "0.5", features = ["html_reports"] }
 
 [profile.release]
-# Maximum optimization for ~12ns per-packet processing
+# Aggressive optimizations for ~12ns packet processing
 opt-level = 3
-lto = true          # Full Link Time Optimization
-codegen-units = 1   # Maximum optimization potential (forces single-threaded codegen)
-panic = "abort"     # Strips overhead, ensures determinism and speed
-strip = true        # Removes all debug symbols for minimal binary size
-incremental = false # Ensures clean, top-tier optimization every build
+lto = true          # Link Time Optimization for cross-crate speed
+codegen-units = 1   # Better optimization at the cost of compile time
+panic = "abort"     # Minimizes binary size and improves performance
