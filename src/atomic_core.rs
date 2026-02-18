@@ -1,90 +1,102 @@
 // =================================================================
 // Project: TigerΔ (Tiger Delta)
 // Module: atomic_core.rs
-// Description: Core resonance engine for aperiodic traffic filtering.
-// Logic: Implements Dalton's Law of Partial Pressures and 
-//        Heisenberg's Uncertainty Principle for network telemetry.
+// Description: Core resonance engine with Quantum Hysteresis.
 // =================================================================
 
 use std::f64::consts::PI;
 
-/// Ірраціональні константи для створення аперіодичного дрейфу.
-/// Це запобігає синхронізації атакуючого з алгоритмом захисту.
-const PHI: f64 = 1.6180339887498948; // Золотий перетин
-const EQUILIBRIUM: f64 = PHI / PI;    // Срібна середина (~0.515)
-const SEPTIMAL_SHIFT: f64 = 1.777;    // Мала септима (16/9) для дисонансу
+/// Ірраціональні константи для аперіодичного дрейфу.
+const PHI: f64 = 1.6180339887498948; 
+const EQUILIBRIUM: f64 = PHI / PI;    
+const SEPTIMAL_SHIFT: f64 = 1.777;    
 
-/// AtomicCore — це імовірнісна модель стану мережевого вузла.
-/// Вона розглядає вхідний трафік не як байти, а як енергетичні рівні.
+
+
 pub struct AtomicCore {
-    /// Кількість "протонів" — базовий поріг стабільності системи.
+    /// Proton count — поріг стабільності (маса ядра).
     proton_count: u32,
-    /// Електронна хмара (Ψ²) — імовірнісна зона, де пакет вважається легітимним.
+    /// Electron cloud (Ψ²) — зона імовірнісного знаходження легітимного сигналу.
     electron_cloud: f64,
-    /// Валентна енергія — енергія, доступна для обробки корисного навантаження.
+    /// Valence energy — енергія, доступна для обробки.
     valence_energy: f64,
+    /// Поріг деструкції — інтеграція з Negative Radius.
+    is_critical: bool,
 }
 
 impl AtomicCore {
-    /// Створює нове ядро захисту з базовими параметрами стабільності.
     pub fn new(stability: u32) -> Self {
         Self {
             proton_count: stability,
             electron_cloud: 0.5,
             valence_energy: 1.0,
+            is_critical: false,
         }
     }
 
-    /// Sharpen Angles (Стирання країв / Заточування кутів).
-    /// Перетворює імпульсний удар атаки на кутовий момент, розсіюючи його в хмарі.
-    /// Реалізація принципу Гейзенберга: чим точніший удар, тим вища невизначеність відгуку.
+    /// Sharpen Angles (Заточування кутів).
+    /// Перетворює лінійний удар атаки на кутовий момент.
     pub fn sharpen_angles(&mut self, impact: f64) {
-        let resistance = self.proton_count as f64 * PHI;
+        // Захист від від'ємної енергії
+        let abs_impact = impact.abs();
+        let resistance = (self.proton_count as f64 * PHI).max(1.0);
         
-        // Арктангенс перетворює лінійну атаку в обмежений кут (радіани)
-        let angle = (impact / resistance).atan();
+        // Арктангенс стискає будь-яку енергію в діапазон (-π/2, π/2)
+        let angle = (abs_impact / resistance).atan();
         
-        // Оновлення стану хмари через косинусну інтерференцію
+        // Косинусна інтерференція: чим сильніший кут, тим більше коливання хмари
         self.electron_cloud = (self.electron_cloud + angle).cos().abs();
         
-        // Закон Дальтона: вилучаємо частину енергії дисонансу для підсилення ядра
-        self.valence_energy += angle.abs() * 0.1;
+        // Поглинання частини енергії (Закон Дальтона)
+        self.valence_energy += angle * 0.1;
     }
 
-    /// Find the Middle (Пошук рівноваги / OODA Orient).
-    /// Повертає систему до точки EQUILIBRIUM (Φ/π) та обчислює дрейф.
+    /// Find the Middle (Пошук рівноваги / AADA Logic).
+    /// Повертає відхилення (drift) від золотого перетину.
     pub fn find_the_middle(&mut self, input_entropy: f64) -> f64 {
-        if self.valence_energy < 0.001 {
-            return input_entropy;
+        // Правило 111-ї групи: контроль знаменника
+        if self.valence_energy <= 1e-9 {
+            self.valence_energy = 0.001; 
         }
 
         let ratio = input_entropy / self.valence_energy;
         let drift = ratio - EQUILIBRIUM;
 
-        // Механізм адаптивного "дихання" системи (AADA)
+        // Адаптивне дихання системи
         if drift.abs() > 0.05 {
-            // Стискання пружини при виявленні дисонансу
+            // Дисонанс: стискаємо валентну зону (підвищуємо чутливість)
             self.valence_energy *= 1.0 - (drift.signum() * 0.02);
+            self.is_critical = true;
         } else {
-            // Релаксація та повернення до базового енергетичного стану
-            self.valence_energy = self.valence_energy * 0.99 + 1.0 * 0.01;
+            // Гармонія: релаксація до одиничного стану
+            self.valence_energy = self.valence_energy * 0.95 + 0.05;
+            self.is_critical = false;
         }
 
         drift
     }
 
-    /// Threat Probability (Ймовірність загрози / Wave Function Collapse).
-    /// Обчислює ймовірність того, що сигнал є дисонансним (атакою).
-    /// Використовує малу септиму для виявлення "глухих" атакуючих.
+    /// Threat Probability (Колапс хвильової функції).
+    /// Обчислює ймовірність атаки через Septimal Shift.
     pub fn threat_probability(&self, input_entropy: f64) -> f64 {
+        if self.valence_energy <= 0.0 { return 1.0; }
+        
         let drift = (input_entropy / self.valence_energy) - EQUILIBRIUM;
         
-        // Квадрат хвильової функції визначає ймовірність детекції > 90%
+        // Квадрат синуса для отримання імовірності [0, 1]
         (drift * PI * SEPTIMAL_SHIFT).sin().powi(2)
     }
 
-    /// Геттер для поточного рівня енергії (для зовнішнього моніторингу)
-    pub fn get_energy(&self) -> f64 {
-        self.valence_energy
+    /// Встановлює критичний стан (викликається при Negative Radius Overflow)
+    pub fn set_critical(&mut self, state: bool) {
+        self.is_critical = state;
+        if state {
+            // При критичному стані ядро "важчає"
+            self.valence_energy *= 0.8;
+        }
+    }
+
+    pub fn get_metrics(&self) -> (f64, f64, bool) {
+        (self.valence_energy, self.electron_cloud, self.is_critical)
     }
 }
