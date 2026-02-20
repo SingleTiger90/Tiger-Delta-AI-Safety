@@ -1,5 +1,4 @@
-<img width="1332" height="602" alt="image" src="https://github.com/user-attachments/assets/240d3f77-43ce-4ccf-a6a2-876c8c74b429" />
-
+![Tiger Delta Mascot]()
 # 🐯 TigerΔ (Tiger Delta)
 ## Ulenspiegel — Platinum Core v3.3
 
