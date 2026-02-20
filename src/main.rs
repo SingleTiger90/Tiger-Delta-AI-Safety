@@ -1,3 +1,10 @@
+// =================================================================
+// Project: TigerΔ (Tiger Delta)
+// Module: main.rs
+// Description: Platinum Core — Asynchronous Nerve Center (Ulenspiegel)
+// Framework: Tokio (Async Runtime) / Tracing (Logging)
+// =================================================================
+
 mod lumis;
 mod string_state;
 mod lagrange;
@@ -15,110 +22,164 @@ use tokio::net::UdpSocket;
 use tracing::{info, warn, error};
 use std::sync::Arc;
 
-
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize tracing
     tracing_subscriber::fmt::init();
-    info!("🐯 Delta Tiger v3.2 \"Ulenspiegel\" — Platinum Core Online");
+    info!("🐯 TigerΔ v3.3 \"Ulenspiegel\" — Platinum Core Online");
 
-    // Канал для передачі атрибутів пакетів
+    // Channel between interceptor and cognitive core
     let (tx, mut rx) = mpsc::channel::<(Vec<i64>, std::net::SocketAddr)>(1024);
 
+    // UDP socket
     let socket = Arc::new(UdpSocket::bind("0.0.0.0:8888").await?);
     let socket_responder = socket.clone();
 
-    // Головний логічний потік (The Brain)
+    // =============================================================
+    // BRAIN THREAD
+    // =============================================================
     tokio::spawn(async move {
         let mut lumis = LumisCore::new();
-        let mut atomic = AtomicCore::new(100); // Базова стабільність
+        let mut atomic = AtomicCore::new(100);
         let mut simul = SimulUnit::new();
+
         let mut defense_mass = 1000.0;
         let mut lagrange = LagrangeEquilibrium::new(defense_mass);
         let mut state = StringState::new();
 
         while let Some((attrs_vec, addr)) = rx.recv().await {
-            // 1. Формування вектору ознак
-            let attrs: [i64; 10] = {
-                let mut arr = [0i64; 10];
-                for (i, &val) in attrs_vec.iter().take(10).enumerate() { arr[i] = val; }
-                arr
-            };
-
-            // 2. Розрахунок вхідної енергії (Physics-based)
-            let attack_energy: f64 = attrs.iter().map(|&x| x as f64).sum::<f64>() * PHI_INVERSE / 1_000_000.0;
-
-            // 3. Передфільтр у SimulUnit (Digital Twin)
-            if simul.project_impact(attack_energy) {
-                warn!("⚠️ ANTI-TIGER IMPULSE: Blocked pre-emptively from {}", addr);
-                let _ = socket_responder.send_to(b"DELTA_SHIELD_OVERLOAD", addr).await;
-                continue; 
+            // -----------------------------------------------------
+            // 1. Feature vector normalization
+            // -----------------------------------------------------
+            let mut attrs = [0i64; 10];
+            for (i, &v) in attrs_vec.iter().take(10).enumerate() {
+                attrs[i] = v;
             }
 
-            // 4. Квантова обробка в AtomicCore
-            atomic.sharpen_angles(attack_energy);
-            let drift = atomic.find_the_middle(attack_energy);
-            let threat_p = atomic.threat_probability(attack_energy);
+            // -----------------------------------------------------
+            // 2. Impact energy (physical)
+            // -----------------------------------------------------
+            let raw_energy: f64 =
+                attrs.iter().map(|&x| x as f64).sum::<f64>() * PHI_INVERSE;
 
-            // 5. Стабілізація Лагранжа
+            let impact_energy = (raw_energy / 1_000_000.0).clamp(0.0, 10.0);
+
+            // -----------------------------------------------------
+            // 3. Entropy estimation (informational)
+            // -----------------------------------------------------
+            let entropy_input =
+                (attrs[3].abs() as f64 / (attrs[1].max(1) as f64))
+                .clamp(0.0, 10.0);
+
+            // -----------------------------------------------------
+            // 4. Digital Twin pre-filter
+            // -----------------------------------------------------
+            if simul.project_impact(impact_energy) {
+                warn!("⚠️ PREEMPTIVE BLOCK from {}", addr);
+                let _ = socket_responder
+                    .send_to(b"DELTA_SHIELD_PREEMPT", addr)
+                    .await;
+                continue;
+            }
+
+            // -----------------------------------------------------
+            // 5. Atomic core processing
+            // -----------------------------------------------------
+            atomic.sharpen_angles(impact_energy);
+            let _drift = atomic.find_the_middle(entropy_input);
+            let threat_p = atomic.threat_probability(entropy_input);
+
+            // -----------------------------------------------------
+            // 6. Lagrange stabilization
+            // -----------------------------------------------------
             let compact = state.compactify(&attrs);
-            let compact_float = to_float(compact);
-            let result = lagrange.stabilize(compact_float, attack_energy);
+            let compact_f = to_float(compact);
+            let equilibrium = lagrange.stabilize(compact_f, impact_energy);
 
-            // 6. Розрахунок резонансу
-            let resonance = (1.0 - (result.unwrap_or(PHI) - PHI).abs() / PHI).clamp(0.0, 1.0);
-            
-            // 7. Життєвий цикл Lumis
-            lumis.tick_cycle(attack_energy, resonance, &mut defense_mass);
-            lagrange.update_mass(defense_mass); // Оновлюємо масу без перестворення об'єкта
+            let resonance =
+                (1.0 - (equilibrium.unwrap_or(PHI) - PHI).abs() / PHI)
+                .clamp(0.0, 1.0);
 
-            // 8. Реакція системи
-            if threat_p > 0.85 || result.is_none() {
-                warn!("🔥 ANNIHILATION: {} | Prob: {:.2} | Res: {:.4}", addr, threat_p, resonance);
-                let _ = socket_responder.send_to(b"DELTA_SHIELD_NULL", addr).await;
+            // -----------------------------------------------------
+            // 7. Lumis life-cycle update
+            // -----------------------------------------------------
+            lumis.tick_cycle(impact_energy, resonance, &mut defense_mass);
+            defense_mass = defense_mass.clamp(100.0, 10_000.0);
+            lagrange.update_mass(defense_mass);
+
+            // -----------------------------------------------------
+            // 8. Adaptive response logic
+            // -----------------------------------------------------
+            if atomic.is_critical {
+                warn!(
+                    "🧬 MUTATION ACTIVE | phase={} | scars={:.3}",
+                    atomic.mutation_phase,
+                    atomic.scars_energy
+                );
+            }
+
+            if threat_p > 0.85 || equilibrium.is_none() {
+                error!(
+                    "🔥 ATTACK | src={} | p={:.2} | phase={} | scars={:.2}",
+                    addr,
+                    threat_p,
+                    atomic.mutation_phase,
+                    atomic.scars_energy
+                );
+                let _ = socket_responder
+                    .send_to(b"DELTA_SHIELD_NULL", addr)
+                    .await;
             } else {
-                // Відправляємо децептивний стан (Decoy), щоб заплутати атакуючого
-                let decoy = simul.get_decoy_state();
-                if decoy > 0.7 {
-                    let _ = socket_responder.send_to(format!("STATUS_OK_{:.2}", decoy).as_bytes(), addr).await;
+                let decoy = simul.get_decoy_state() * resonance;
+                if decoy > 0.6 {
+                    let msg = format!("STATUS_OK_{:.2}", decoy);
+                    let _ = socket_responder.send_to(msg.as_bytes(), addr).await;
                 }
             }
 
+            // -----------------------------------------------------
+            // 9. Rest mode
+            // -----------------------------------------------------
             if lumis.is_resting() {
-                info!("🌙 LUMIS REST MODE — entropy: {:.4}", lumis.entropy_level());
+                info!(
+                    "🌙 LUMIS REST MODE | entropy={:.4}",
+                    lumis.entropy_level()
+                );
             }
         }
     });
 
-    info!("Paranoia Filter Active — Listening on UDP 8888");
+    // =============================================================
+    // UDP INTERCEPTOR
+    // =============================================================
+    info!("🛰 Paranoia Filter Active — UDP 8888");
     let mut buf = [0u8; 2048];
 
     loop {
         let (len, addr) = socket.recv_from(&mut buf).await?;
 
-        // Валідація розміру (RFC захист)
-        if len < 8 || len > 1024 { continue; }
+        if len < 8 || len > 1024 {
+            continue;
+        }
 
-        let packet_data = &buf[..len];
-        let weight: i64 = packet_data.iter().map(|&b| b as i64).sum();
+        let data = &buf[..len];
+        let weight: i64 = data.iter().map(|&b| b as i64).sum();
 
-        // Формуємо 10 атрибутів для StringState
         let attrs = vec![
             addr.port() as i64,
             len as i64,
-            packet_data[0] as i64,
+            data[0] as i64,
             weight,
-            (weight % 111), // 111-а група в дії :)
-            (len as i64 % 7),
-            packet_data.iter().take(5).map(|&x| x as i64).sum(),
-            (addr.ip().to_string().len() as i64),
-            0, 0,
+            weight % 111,
+            (len as i64) % 7,
+            data.iter().take(5).map(|&x| x as i64).sum(),
+            addr.ip().to_string().len() as i64,
+            0,
+            0,
         ];
 
-        // Відправка в чергу (Negative Radius Core у нас реалізований через обмеження каналу mpsc)
-        if let Err(_) = tx.try_send((attrs, addr)) {
-            // Тут і відбувається переповнення черги — "Negative Radius"
-            error!("QUEUE OVERFLOW: Packet dropped from {}", addr);
+        if tx.try_send((attrs, addr)).is_err() {
+            error!("QUEUE OVERFLOW | Negative Radius | {}", addr);
         }
     }
 }
