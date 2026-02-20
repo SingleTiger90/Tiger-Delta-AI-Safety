@@ -57,3 +57,16 @@ Incoming energy increases internal "inertia". The system becomes more stable the
 | Input Acquisition            | Python   | Real-time signal ingestion                           | MAVLink, ROS2 (optional), telemetry parsing          |
 | Federated Gossip             | Python   | Distributed state synchronization                    | UDP/TCP, ChaCha20 + HMAC encryption                  |
 | Watchdog & Monitoring        | Python   | Runtime integrity & event observation                | System call monitoring, interference scoring         |
+
+## Citation
+
+If you use TigerΔ in your research, please cite:
+
+```bibtex
+@software{Honcharov_TigerDelta_2025,
+  author       = {Honcharov, Vladyslav},
+  title        = {TigerΔ: Bio-Mimetic Autonomous Cyber Defense Engine},
+  year         = {2025},
+  url          = {[https://github.com/SingleTiger90/Tiger-Delta-AI-Safety](https://github.com/SingleTiger90/Tiger-Delta-AI-Safety)},
+  note         = {Developed in Ukraine}
+}
